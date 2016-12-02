@@ -12,13 +12,13 @@ Here's a little example:
 	package main
 
 	import (
-		"github.com/felixangell/strife/gfx"
+		"github.com/felixangell/strife"
 	)
 
 	func main() {
-		window, failed := gfx.CreateRenderWindow(1280, 720)
-		if failed {
-			panic("failed to create render window")
+		window, err := strife.CreateRenderWindow(1280, 720, strife.DefaultConfig())
+		if err != nil {
+			panic(err)
 		}
 
 		for !window.CloseRequested() {
@@ -26,8 +26,8 @@ Here's a little example:
 			ctx.Clear()
 
 			{
-				ctx.SetColor(gfx.RGB(255, 0, 255))
-				ctx.Rect(10, 10, 50, 50, gfx.Fill)			
+				ctx.SetColor(strife.RGB(255, 0, 255))
+				ctx.Rect(10, 10, 50, 50, strife.Fill)			
 			}
 
 			ctx.Display()

@@ -12,8 +12,24 @@ const (
 	Fill
 )
 
+type RenderConfig struct {
+	Alias        bool
+	Accelerated  bool
+	VerticalSync bool
+}
+
+func DefaultConfig() *RenderConfig {
+	return &RenderConfig{
+		Alias:        true,
+		Accelerated:  true,
+		VerticalSync: true,
+	}
+}
+
 type Renderer struct {
+	RenderConfig
 	*sdl.Renderer
+
 	color *Color
 	font  *Font
 }
@@ -57,7 +73,13 @@ func (r *Renderer) String(message string, x, y int) {
 		panic("Attempted to render '" + message + "' but no font is set!")
 	}
 
-	surface, err := r.font.RenderUTF8_Solid(message, r.color.ToSDLColor())
+	var surface *sdl.Surface
+	var err error
+	if r.Alias {
+		surface, err = r.font.RenderUTF8_Blended(message, r.color.ToSDLColor())
+	} else {
+		surface, err = r.font.RenderUTF8_Solid(message, r.color.ToSDLColor())
+	}
 	defer surface.Free()
 	if err != nil {
 		panic(err)
@@ -79,15 +101,26 @@ func (r *Renderer) Image(image *Image, x, y int) {
 	r.Copy(image.Texture, nil, &sdl.Rect{int32(x), int32(y), int32(w), int32(h)})
 }
 
-func CreateRenderer(parent *RenderWindow) (*Renderer, error) {
-	renderInst, err := sdl.CreateRenderer(parent.Window, -1, sdl.RENDERER_ACCELERATED)
+func CreateRenderer(parent *RenderWindow, config *RenderConfig) (*Renderer, error) {
+	var mode uint32
+	if config.Accelerated {
+		mode |= sdl.RENDERER_ACCELERATED
+	} else {
+		mode |= sdl.RENDERER_SOFTWARE
+	}
+	if config.VerticalSync {
+		mode |= sdl.RENDERER_PRESENTVSYNC
+	}
+
+	renderInst, err := sdl.CreateRenderer(parent.Window, -1, mode)
 	if err != nil {
 		return nil, fmt.Errorf("Failed to create render context")
 	}
 
 	renderer := &Renderer{
-		Renderer: renderInst,
-		color:    RGB(255, 255, 255),
+		RenderConfig: *config,
+		Renderer:     renderInst,
+		color:        RGB(255, 255, 255),
 	}
 	return renderer, nil
 }
