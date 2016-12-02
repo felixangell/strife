@@ -1,4 +1,4 @@
-package gfx
+package strife
 
 import (
 	"github.com/veandco/go-sdl2/sdl"

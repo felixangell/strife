@@ -1,4 +1,4 @@
-package gfx
+package strife
 
 var (
 	Black *Color = RGB(0, 0, 0)
