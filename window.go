@@ -31,6 +31,8 @@ func (w *RenderWindow) GetRenderContext() *Renderer {
 }
 
 func CreateRenderWindow(w, h int) (*RenderWindow, bool) {
+	sdl.Init(sdl.INIT_VIDEO)
+
 	windowHandle, err := sdl.CreateWindow("", sdl.WINDOWPOS_CENTERED, sdl.WINDOWPOS_CENTERED, w, h, sdl.WINDOW_SHOWN)
 	if err != nil {
 		return nil, true

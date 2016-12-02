@@ -24,6 +24,8 @@ func (r *Renderer) Clear() {
 		panic(err)
 	}
 	r.Rect(0, 0, w, h, Fill)
+
+	r.SetColor(White)
 }
 
 func (r *Renderer) Display() {
@@ -45,13 +47,27 @@ func (r *Renderer) Rect(x, y, w, h int, mode Style) {
 	}
 }
 
+func (r *Renderer) SetFont(font *Font) {
+	r.font = font
+}
+
 func (r *Renderer) String(message string, x, y int) {
+	if r.font == nil {
+		panic("Attempted to render '" + message + "' but no font is set!")
+	}
+
 	surface, err := r.font.RenderUTF8_Solid(message, r.color.ToSDLColor())
+	defer surface.Free()
 	if err != nil {
 		panic(err)
 	}
-	_, err := r.Renderer.CreateTextureFromSurface(surface)
-	surface.Free()
+
+	texture, err := r.Renderer.CreateTextureFromSurface(surface)
+	defer texture.Destroy()
+	if err != nil {
+		panic(err)
+	}
+	r.Renderer.Copy(texture, nil, &sdl.Rect{int32(x), int32(y), surface.W, surface.H})
 }
 
 func (r *Renderer) Image(image *Image, x, y int) {
@@ -68,8 +84,9 @@ func CreateRenderer(parent *RenderWindow) (*Renderer, bool) {
 		return nil, true
 	}
 
-	return &Renderer{
+	renderer := &Renderer{
 		Renderer: renderInst,
 		color:    RGB(255, 255, 255),
-	}, false
+	}
+	return renderer, false
 }
