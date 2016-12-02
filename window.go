@@ -1,6 +1,7 @@
 package strife
 
 import (
+	"fmt"
 	"github.com/veandco/go-sdl2/sdl"
 	"runtime"
 )
@@ -30,12 +31,12 @@ func (w *RenderWindow) GetRenderContext() *Renderer {
 	return w.renderContext
 }
 
-func CreateRenderWindow(w, h int) (*RenderWindow, bool) {
+func CreateRenderWindow(w, h int) (*RenderWindow, error) {
 	sdl.Init(sdl.INIT_VIDEO)
 
 	windowHandle, err := sdl.CreateWindow("", sdl.WINDOWPOS_CENTERED, sdl.WINDOWPOS_CENTERED, w, h, sdl.WINDOW_SHOWN)
 	if err != nil {
-		return nil, true
+		return nil, fmt.Errorf("Failed to create window\n")
 	}
 
 	window := &RenderWindow{
@@ -43,13 +44,13 @@ func CreateRenderWindow(w, h int) (*RenderWindow, bool) {
 		renderContext: nil,
 	}
 
-	renderer, failed := CreateRenderer(window)
-	if failed {
-		return nil, true
+	renderer, err := CreateRenderer(window)
+	if err != nil {
+		return nil, err
 	}
 	window.renderContext = renderer
 	RenderInstance = renderer
 
 	runtime.LockOSThread()
-	return window, false
+	return window, nil
 }

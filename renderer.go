@@ -1,6 +1,7 @@
 package strife
 
 import (
+	"fmt"
 	"github.com/veandco/go-sdl2/sdl"
 )
 
@@ -78,15 +79,15 @@ func (r *Renderer) Image(image *Image, x, y int) {
 	r.Copy(image.Texture, nil, &sdl.Rect{int32(x), int32(y), int32(w), int32(h)})
 }
 
-func CreateRenderer(parent *RenderWindow) (*Renderer, bool) {
+func CreateRenderer(parent *RenderWindow) (*Renderer, error) {
 	renderInst, err := sdl.CreateRenderer(parent.Window, -1, sdl.RENDERER_ACCELERATED)
 	if err != nil {
-		return nil, true
+		return nil, fmt.Errorf("Failed to create render context")
 	}
 
 	renderer := &Renderer{
 		Renderer: renderInst,
 		color:    RGB(255, 255, 255),
 	}
-	return renderer, false
+	return renderer, nil
 }

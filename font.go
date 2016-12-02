@@ -1,6 +1,7 @@
 package strife
 
 import (
+	"fmt"
 	ttf "github.com/veandco/go-sdl2/sdl_ttf"
 )
 
@@ -10,18 +11,17 @@ type Font struct {
 	*ttf.Font
 }
 
-func LoadFont(path string) (*Font, bool) {
+func LoadFont(path string) (*Font, error) {
 	if !fontLoaderIitialized {
 		ttf.Init()
 	}
 
 	font, err := ttf.OpenFont(path, 14)
 	if err != nil {
-		return nil, true
+		return nil, fmt.Errorf("Failed to load font at '%s'\n", path)
 	}
-	return &Font{
-		font,
-	}, false
+
+	return &Font{font}, nil
 }
 
 func (f *Font) Destroy() {
