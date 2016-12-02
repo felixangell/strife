@@ -14,6 +14,7 @@ const (
 type Renderer struct {
 	*sdl.Renderer
 	color *Color
+	font  *Font
 }
 
 func (r *Renderer) Clear() {
@@ -42,6 +43,15 @@ func (r *Renderer) Rect(x, y, w, h int, mode Style) {
 	} else {
 		r.FillRect(&sdl.Rect{int32(x), int32(y), int32(w), int32(h)})
 	}
+}
+
+func (r *Renderer) String(message string, x, y int) {
+	surface, err := r.font.RenderUTF8_Solid(message, r.color.ToSDLColor())
+	if err != nil {
+		panic(err)
+	}
+	_, err := r.Renderer.CreateTextureFromSurface(surface)
+	surface.Free()
 }
 
 func (r *Renderer) Image(image *Image, x, y int) {
