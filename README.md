@@ -1,7 +1,5 @@
 # strife
-A simple wrapper around veandco's SDL2 bindings. 
-
-I wrote this out of frustration with using SDL2. It's a bit awkward to use as you need a renderer instance to draw images, etc. The code isn't pretty, but it should simplify usage to make it easy to render things intuitively.
+A simple game framework that wraps around SDL2.
 
 ## notes
 I pretty much copy/pasted this from one of my game projects into a separate repository, so it's all bundled into one module. Maybe I'll clean it up later, but hey ho, it works for now.
