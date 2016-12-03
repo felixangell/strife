@@ -8,6 +8,7 @@ import (
 
 type Image struct {
 	*sdl.Texture
+	*sdl.Surface
 }
 
 func LoadImage(path string) (*Image, error) {
@@ -22,11 +23,18 @@ func LoadImage(path string) (*Image, error) {
 		return nil, fmt.Errorf("Failed to load '%s' into memory\n", path)
 	}
 
-	image := &Image{texture}
-	surface.Free()
+	image := &Image{
+		texture,
+		surface,
+	}
 	return image, nil
+}
+
+func (i *Image) GetSurface() *sdl.Surface {
+	return i.Surface
 }
 
 func (i *Image) Destroy() {
 	i.Texture.Destroy()
+	i.Surface.Free()
 }

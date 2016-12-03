@@ -68,7 +68,7 @@ func (r *Renderer) SetFont(font *Font) {
 	r.font = font
 }
 
-func (r *Renderer) String(message string, x, y int) {
+func (r *Renderer) String(message string, x, y int) (int, int) {
 	if r.font == nil {
 		panic("Attempted to render '" + message + "' but no font is set!")
 	}
@@ -91,6 +91,7 @@ func (r *Renderer) String(message string, x, y int) {
 		panic(err)
 	}
 	r.Renderer.Copy(texture, nil, &sdl.Rect{int32(x), int32(y), surface.W, surface.H})
+	return int(surface.W), int(surface.H)
 }
 
 func (r *Renderer) Image(image *Image, x, y int) {
