@@ -9,6 +9,7 @@ import (
 type Image struct {
 	*sdl.Texture
 	*sdl.Surface
+	Width, Height int
 }
 
 // LoadImage will load the image at the given path. It will
@@ -32,6 +33,8 @@ func LoadImage(path string) (*Image, error) {
 	image := &Image{
 		texture,
 		surface,
+		int(surface.W),
+		int(surface.H),
 	}
 	return image, nil
 }
