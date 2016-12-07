@@ -6,6 +6,10 @@ import (
 	"runtime"
 )
 
+// The current render instance, in an ideal
+// world this will only be set once. This is exists
+// because SDL wants to have the render instance for
+// loading images, fonts, etc.
 var RenderInstance *Renderer
 
 type RenderWindow struct {
@@ -13,6 +17,10 @@ type RenderWindow struct {
 	renderContext *Renderer
 }
 
+// CloseRequested will poll for any events. All events
+// are unhandled, _except_ for the Quit Event, which will
+// destroy the render context, render window, and cause
+// this function to return true.
 func (w *RenderWindow) CloseRequested() bool {
 	for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
 		switch event.(type) {
@@ -31,6 +39,11 @@ func (w *RenderWindow) GetRenderContext() *Renderer {
 	return w.renderContext
 }
 
+// CreateRenderWindow will create a render window of the given
+// width and height, with the specified configuration. You can
+// specify a default configuration with `strife.DefaultConfig()`.
+// Note that this will spawn the window at the centre of the main
+// display.
 func CreateRenderWindow(w, h int, config *RenderConfig) (*RenderWindow, error) {
 	sdl.Init(sdl.INIT_VIDEO)
 

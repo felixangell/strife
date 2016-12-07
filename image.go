@@ -11,10 +11,16 @@ type Image struct {
 	*sdl.Surface
 }
 
+// LoadImage will load the image at the given path. It will
+// return the loaded image, and any errors encountered.
 func LoadImage(path string) (*Image, error) {
 	surface, err := img.Load(path)
 	if err != nil {
 		return nil, fmt.Errorf("Failed to load image '%s'\n", path)
+	}
+
+	if RenderInstance == nil {
+		return nil, fmt.Errorf("Render context has not been initialized yet.")
 	}
 
 	texture, err := RenderInstance.CreateTextureFromSurface(surface)

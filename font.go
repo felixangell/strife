@@ -11,12 +11,12 @@ type Font struct {
 	*ttf.Font
 }
 
-func LoadFont(path string) (*Font, error) {
+func LoadFont(path string, size int) (*Font, error) {
 	if !fontLoaderIitialized {
 		ttf.Init()
 	}
 
-	font, err := ttf.OpenFont(path, 14)
+	font, err := ttf.OpenFont(path, size)
 	if err != nil {
 		return nil, fmt.Errorf("Failed to load font at '%s'\n", path)
 	}

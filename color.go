@@ -18,6 +18,15 @@ func (c Color) ToSDLColor() sdl.Color {
 	return sdl.Color{c.R, c.G, c.B, c.A}
 }
 
+// TODO: alpha channel >> 24.
+func HexRGB(col int32) *Color {
+	a := uint8(255)
+	r := uint8(col & 0xff0000 >> 16)
+	g := uint8(col & 0xff00 >> 8)
+	b := uint8(col & 0xff)
+	return RGBA(r, g, b, a)
+}
+
 func RGBA(r, g, b, a uint8) *Color {
 	return &Color{r, g, b, a}
 }

@@ -5,6 +5,10 @@ import (
 	"github.com/veandco/go-sdl2/sdl"
 )
 
+// The style to render
+// primitive shapes (Rectangles, Circles, etc).
+// Fill meaning fill the shape with colour, and
+// Line meaning to draw the outline of the shape.
 type Style uint
 
 const (
@@ -12,6 +16,11 @@ const (
 	Fill
 )
 
+// RenderConfig is the configuration settings
+// for the renderer.
+// Alias => Controls if the fonts are smoothed;
+// Accelerated => The renderer is hardware accelerated if true; and
+// VerticalSync => Will synchronize the FPS with the monitors refresh rate
 type RenderConfig struct {
 	Alias        bool
 	Accelerated  bool
@@ -34,6 +43,9 @@ type Renderer struct {
 	font  *Font
 }
 
+// Clear will clear the screen to black. By default
+// it will immediately set the colour state to render
+// things as white.
 func (r *Renderer) Clear() {
 	r.SetColor(Black)
 	w, h, err := r.Renderer.GetRendererOutputSize()
@@ -53,6 +65,9 @@ func (r *Renderer) SetColor(col *Color) {
 	r.color = col
 }
 
+// Rect will draw a rectangle at the given x, y co-ordinates
+// of the specified size. It takes the mode to render the
+// rectangle as: fill or line.
 func (r *Renderer) Rect(x, y, w, h int, mode Style) {
 	color := r.color
 	r.SetDrawColor(color.R, color.G, color.B, color.A)
@@ -68,6 +83,13 @@ func (r *Renderer) SetFont(font *Font) {
 	r.font = font
 }
 
+// String will render the given string at the given x, y co-ordinates.
+// It will return the width and height of the string it renders.
+// Note this is currently not as fast as it could be as it renders
+// to the surface each call! This can be fixed by either having
+// some kind of caching in place, OR having some utility in font.go
+// which will render to a strife.Image which can be rendered
+// with the Image function.
 func (r *Renderer) String(message string, x, y int) (int, int) {
 	if r.font == nil {
 		panic("Attempted to render '" + message + "' but no font is set!")
@@ -94,14 +116,43 @@ func (r *Renderer) String(message string, x, y int) (int, int) {
 	return int(surface.W), int(surface.H)
 }
 
+// SubImage will render a sub-section of the given image. tx, ty are
+// the x, y pixel coordinates of the sub-image in the image to render. tw, th
+// are the size of the sub-image.
+func (r *Renderer) SubImage(image *Image, x, y int, tx, ty, tw, th int) {
+	r.SubImageScale(image, x, y, tx, ty, tw, th, tw, th)
+}
+
+// SubImageScale will render a sub-section of the given image scaled
+// to the given width and height. See the documentation for SubImage.
+func (r *Renderer) SubImageScale(image *Image, x, y int, tx, ty, tw, th int, sw, sh int) {
+	r.Copy(image.Texture, &sdl.Rect{
+		int32(tx), int32(ty), int32(tw), int32(th),
+	}, &sdl.Rect{int32(x), int32(y), int32(sw), int32(sh)})
+}
+
+// Image will render the given image at the given
+// x, y co-ordinates at the images full size.
 func (r *Renderer) Image(image *Image, x, y int) {
 	_, _, w, h, err := image.Texture.Query()
 	if err != nil {
 		panic(err)
 	}
+	r.ImageScale(image, x, y, int(w), int(h))
+}
+
+// ImageScale will render the image at the given co-ordinate
+// scaled to the given size.
+func (r *Renderer) ImageScale(image *Image, x, y, w, h int) {
 	r.Copy(image.Texture, nil, &sdl.Rect{int32(x), int32(y), int32(w), int32(h)})
 }
 
+// CreateRenderer will create a rendering instance for the given
+// window. It takes the configuration specifying if the renderer
+// is software or hardware accelerated, as well as if the renderer
+// should be vertically synchronized.
+// It returns the renderer and any error that is encountered
+// during the creation.
 func CreateRenderer(parent *RenderWindow, config *RenderConfig) (*Renderer, error) {
 	var mode uint32
 	if config.Accelerated {
