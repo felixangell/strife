@@ -48,7 +48,7 @@ type Renderer struct {
 // things as white.
 func (r *Renderer) Clear() {
 	r.SetColor(Black)
-	w, h, err := r.Renderer.GetRendererOutputSize()
+	w, h, err := r.Renderer.GetOutputSize()
 	if err != nil {
 		panic(err)
 	}

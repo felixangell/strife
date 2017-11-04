@@ -13,7 +13,7 @@ func main() {
 	window.HandleEvents(func(evt strife.StrifeEvent) {
 		switch event := evt.(type) {
 		case *strife.CloseEvent:
-			println("HUR DUR WE CLOSING")
+			println("closing window!")
 			window.Close()
 		case *strife.WindowResizeEvent:
 			println("resize to ", event.Width, "x", event.Height)

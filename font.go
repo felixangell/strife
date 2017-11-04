@@ -2,7 +2,7 @@ package strife
 
 import (
 	"fmt"
-	ttf "github.com/veandco/go-sdl2/sdl_ttf"
+	ttf "github.com/veandco/go-sdl2/ttf"
 )
 
 var fontLoaderIitialized bool = false
