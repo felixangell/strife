@@ -10,5 +10,7 @@ There are some simple examples in the `example/` directory. Try them out:
 	$ cd example/images
 	$ go run main.go
 
+In addition I have a small (rarely worked on) text-editor I write using the strife framework you can find [here](//github.com/felixangell/nate).
+
 ## license
 [MIT](/LICENSE)

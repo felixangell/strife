@@ -22,6 +22,10 @@ type RenderWindow struct {
 	flags          uint32
 }
 
+func (w *RenderWindow) SetIconImage(img *Image) {
+	w.SetIcon(img.Surface)
+}
+
 func (w *RenderWindow) CloseRequested() bool {
 	return w.closeRequested
 }
