@@ -91,7 +91,7 @@ func (w *RenderWindow) SetResizable(resizable bool) {
 }
 
 func (w *RenderWindow) Create() error {
-	windowHandle, err := sdl.CreateWindow("", sdl.WINDOWPOS_CENTERED, sdl.WINDOWPOS_CENTERED, w.w, w.h, w.flags)
+	windowHandle, err := sdl.CreateWindow("", sdl.WINDOWPOS_CENTERED, sdl.WINDOWPOS_CENTERED, int32(w.w), int32(w.h), w.flags)
 	if err != nil {
 		return fmt.Errorf("Failed to create window\n")
 	}

@@ -52,7 +52,7 @@ func (r *Renderer) Clear() {
 	if err != nil {
 		panic(err)
 	}
-	r.Rect(0, 0, w, h, Fill)
+	r.Rect(0, 0, int(w), int(h), Fill)
 
 	r.SetColor(White)
 }
@@ -98,9 +98,9 @@ func (r *Renderer) String(message string, x, y int) (int, int) {
 	var surface *sdl.Surface
 	var err error
 	if r.Alias {
-		surface, err = r.font.RenderUTF8_Blended(message, r.color.ToSDLColor())
+		surface, err = r.font.RenderUTF8Blended(message, r.color.ToSDLColor())
 	} else {
-		surface, err = r.font.RenderUTF8_Solid(message, r.color.ToSDLColor())
+		surface, err = r.font.RenderUTF8Solid(message, r.color.ToSDLColor())
 	}
 	defer surface.Free()
 	if err != nil {
