@@ -9,16 +9,32 @@ type StrifeEvent interface {
 	Trigger()
 }
 
+func HandleEvent(event StrifeEvent) {
+	event.Trigger()
+}
+
+// BASIC EVENT
+
 type BaseEvent struct{}
 
 func (b *BaseEvent) Trigger() {}
 
-type CloseEvent struct {
+// KEYBOARD
+
+type KeyUpEvent struct {
 	BaseEvent
+	KeyCode int
 }
 
-func HandleEvent(event StrifeEvent) {
-	event.Trigger()
+type KeyDownEvent struct {
+	BaseEvent
+	KeyCode int
+}
+
+// WINDOW CLOSE
+
+type CloseEvent struct {
+	BaseEvent
 }
 
 // WINDOW VISIBILITY

@@ -2,8 +2,9 @@ package strife
 
 import (
 	"fmt"
-	"github.com/veandco/go-sdl2/sdl"
 	"runtime"
+
+	"github.com/veandco/go-sdl2/sdl"
 )
 
 // The current render instance, in an ideal
@@ -11,6 +12,43 @@ import (
 // because SDL wants to have the render instance for
 // loading images, fonts, etc.
 var RenderInstance *Renderer
+
+func init() {
+	runtime.LockOSThread()
+}
+
+type KeyboardHandler struct {
+	keys map[int]bool
+	buff []int
+}
+
+var keyboardInstance = &KeyboardHandler{
+	keys: map[int]bool{},
+	buff: []int{},
+}
+
+func PollKeys() bool {
+	return len(keyboardInstance.buff) > 0
+}
+
+func PopKey() int {
+	keyBuffSize := len(keyboardInstance.buff)
+
+	// get the key
+	keyPressed := keyboardInstance.buff[keyBuffSize-1]
+
+	// apply pop
+	keyboardInstance.buff = keyboardInstance.buff[:keyBuffSize-1]
+
+	return keyPressed
+}
+
+func KeyPressed(keyCode int) bool {
+	if val, ok := keyboardInstance.keys[keyCode]; ok {
+		return val
+	}
+	return false
+}
 
 type RenderWindow struct {
 	*sdl.Window
@@ -43,6 +81,21 @@ func (w *RenderWindow) PollEvents() {
 		switch evt := event.(type) {
 		case *sdl.QuitEvent:
 			w.handler(&CloseEvent{BaseEvent{}})
+
+		case *sdl.KeyboardEvent:
+			keyCode := int(evt.Keysym.Sym)
+			if evt.Type == sdl.KEYUP {
+				w.handler(&KeyUpEvent{BaseEvent{}, keyCode})
+				keyboardInstance.keys[keyCode] = false
+			} else if evt.Type == sdl.KEYDOWN {
+				w.handler(&KeyDownEvent{BaseEvent{}, keyCode})
+				keyboardInstance.keys[keyCode] = true
+
+				// append the key press into a key
+				// buffer which can be processed.
+				keyboardInstance.buff = append(keyboardInstance.buff, keyCode)
+			}
+
 		case *sdl.WindowEvent:
 			switch evt.Event {
 
@@ -104,7 +157,6 @@ func (w *RenderWindow) Create() error {
 	w.renderContext = renderer
 	RenderInstance = renderer
 
-	runtime.LockOSThread()
 	return nil
 }
 
