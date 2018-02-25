@@ -27,6 +27,8 @@ type RenderConfig struct {
 	VerticalSync bool
 }
 
+// DefaultConfig with all of the rendering options
+// enabled.
 func DefaultConfig() *RenderConfig {
 	return &RenderConfig{
 		Alias:        true,
