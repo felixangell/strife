@@ -8,6 +8,15 @@ needs of my other projects (that depend on this) evolve.
 There is no documentation either! If you want to use it you will have to check out the examples. I may
 get round to writing some documentation but the API is very volatile at the moment.
 
+## installing
+Simple as
+
+	$ go get github.com/felixangell/strife
+
+Make sure you have SDL2 installed as well as the ttf and img addons:
+
+	$ brew install SDL2 SDL2_ttf SDL2_img
+
 ## example
 There are some simple examples in the `example/` directory. Try them out:
 
