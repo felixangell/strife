@@ -35,5 +35,8 @@ func LoadFont(path string, size int) (*Font, error) {
 }
 
 func (f *Font) Destroy() {
+	for _, g := range f.CharCache {
+		g.Destroy()
+	}
 	f.Font.Close()
 }
