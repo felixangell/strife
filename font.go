@@ -2,13 +2,20 @@ package strife
 
 import (
 	"fmt"
+	"github.com/veandco/go-sdl2/sdl"
 	ttf "github.com/veandco/go-sdl2/ttf"
 )
 
 var fontLoaderIitialized bool = false
 
+type Glyph struct {
+	*sdl.Texture
+	w, h int32
+}
+
 type Font struct {
 	*ttf.Font
+	CharCache map[rune]*Glyph
 }
 
 func LoadFont(path string, size int) (*Font, error) {
@@ -21,7 +28,10 @@ func LoadFont(path string, size int) (*Font, error) {
 		return nil, fmt.Errorf("Failed to load font at '%s'\n", path)
 	}
 
-	return &Font{font}, nil
+	return &Font{
+		font,
+		map[rune]*Glyph{},
+	}, nil
 }
 
 func (f *Font) Destroy() {

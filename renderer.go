@@ -85,14 +85,56 @@ func (r *Renderer) SetFont(font *Font) {
 	r.font = font
 }
 
-// String will render the given string at the given x, y co-ordinates.
-// It will return the width and height of the string it renders.
-// Note this is currently not as fast as it could be as it renders
-// to the surface each call! This can be fixed by either having
-// some kind of caching in place, OR having some utility in font.go
-// which will render to a strife.Image which can be rendered
-// with the Image function.
+func maxInt32(a, b int32) int32 {
+	if a > b {
+		return a
+	}
+	return b
+}
+
 func (r *Renderer) String(message string, x, y int) (int, int) {
+	if r.font == nil {
+		panic("Attempted to render '" + message + "' but no font is set!")
+	}
+
+	renderRune := func(char rune) (*sdl.Texture, []int32) {
+		message := string(char)
+
+		var surface *sdl.Surface
+		var err error
+		if r.Alias {
+			surface, err = r.font.RenderUTF8Blended(message, r.color.ToSDLColor())
+		} else {
+			surface, err = r.font.RenderUTF8Solid(message, r.color.ToSDLColor())
+		}
+		defer surface.Free()
+		if err != nil {
+			panic(err)
+		}
+
+		texture, err := r.Renderer.CreateTextureFromSurface(surface)
+		if err != nil {
+			panic(err)
+		}
+		return texture, []int32{surface.W, surface.H}
+	}
+
+	var width, height int32
+	for xp, char := range message {
+		glyph, ok := r.font.CharCache[char]
+		if !ok {
+			texture, dim := renderRune(char)
+			glyph = &Glyph{texture, dim[0], dim[1]}
+			r.font.CharCache[char] = glyph
+		}
+		r.Renderer.Copy(glyph.Texture, nil, &sdl.Rect{int32(x + xp), int32(y), glyph.w, glyph.h})
+		width += glyph.w
+		height = maxInt32(height, glyph.h)
+	}
+	return int(width), int(height)
+}
+
+func (r *Renderer) UncachedString(message string, x, y int) (int, int) {
 	if r.font == nil {
 		panic("Attempted to render '" + message + "' but no font is set!")
 	}
