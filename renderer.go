@@ -122,9 +122,14 @@ func (r *Renderer) String(message string, x, y int) (int, int) {
 	var width, height int32
 	for xp, char := range message {
 		glyph, ok := r.font.CharCache[char]
-		if !ok {
+
+		// NOTE: we could either re-cache for different
+		// colours... or we could also store the other colours ??
+		// some kind of array for each colour variant probably
+		// sorted by most often called for extra fastness
+		if !ok || !glyph.Col.Equals(r.color) {
 			texture, dim := renderRune(char)
-			glyph = &Glyph{texture, dim[0], dim[1]}
+			glyph = &Glyph{texture, dim[0], dim[1], r.color}
 			r.font.CharCache[char] = glyph
 		}
 		r.Renderer.Copy(glyph.Texture, nil, &sdl.Rect{int32(x + xp), int32(y), glyph.w, glyph.h})

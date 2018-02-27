@@ -14,6 +14,10 @@ type Color struct {
 	R, G, B, A uint8
 }
 
+func (c *Color) Equals(o *Color) bool {
+	return c.R == o.R && c.G == o.G && c.B == o.B && c.A == o.A
+}
+
 func (c Color) ToSDLColor() sdl.Color {
 	return sdl.Color{c.R, c.G, c.B, c.A}
 }

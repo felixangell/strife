@@ -11,6 +11,7 @@ var fontLoaderIitialized bool = false
 type Glyph struct {
 	*sdl.Texture
 	w, h int32
+	Col  *Color
 }
 
 type Font struct {
