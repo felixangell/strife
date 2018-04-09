@@ -2,6 +2,7 @@ package strife
 
 import (
 	"fmt"
+
 	"github.com/veandco/go-sdl2/sdl"
 )
 
@@ -120,7 +121,7 @@ func (r *Renderer) String(message string, x, y int) (int, int) {
 	}
 
 	var width, height int32
-	for xp, char := range message {
+	for _, char := range message {
 		glyph, ok := r.font.CharCache[char]
 
 		// NOTE: we could either re-cache for different
@@ -132,7 +133,7 @@ func (r *Renderer) String(message string, x, y int) (int, int) {
 			glyph = &Glyph{texture, dim[0], dim[1], r.color}
 			r.font.CharCache[char] = glyph
 		}
-		r.Renderer.Copy(glyph.Texture, nil, &sdl.Rect{int32(x + xp), int32(y), glyph.w, glyph.h})
+		r.Renderer.Copy(glyph.Texture, nil, &sdl.Rect{int32(x) + width, int32(y), glyph.w, glyph.h})
 		width += glyph.w
 		height = maxInt32(height, glyph.h)
 	}
