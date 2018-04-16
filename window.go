@@ -96,6 +96,9 @@ func (w *RenderWindow) PollEvents() {
 				keyboardInstance.buff = append(keyboardInstance.buff, keyCode)
 			}
 
+		case *sdl.MouseWheelEvent:
+			w.handler(&MouseWheelEvent{BaseEvent{}, int(evt.X), int(evt.Y)})
+
 		case *sdl.WindowEvent:
 			switch evt.Event {
 

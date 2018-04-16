@@ -19,6 +19,13 @@ type BaseEvent struct{}
 
 func (b *BaseEvent) Trigger() {}
 
+// MOUSE EVENTS
+
+type MouseWheelEvent struct {
+	BaseEvent
+	X, Y int
+}
+
 // KEYBOARD
 
 type KeyUpEvent struct {
