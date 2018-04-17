@@ -6,7 +6,7 @@ import (
 	ttf "github.com/veandco/go-sdl2/ttf"
 )
 
-var fontLoaderIitialized bool = false
+var fontLoaderInitialized bool = false
 
 type Glyph struct {
 	*sdl.Texture
@@ -20,7 +20,7 @@ type Font struct {
 }
 
 func LoadFont(path string, size int) (*Font, error) {
-	if !fontLoaderIitialized {
+	if !fontLoaderInitialized {
 		ttf.Init()
 	}
 
