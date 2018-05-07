@@ -2,7 +2,6 @@ package strife
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/veandco/go-sdl2/sdl"
 )
@@ -112,16 +111,15 @@ func (r *Renderer) renderRune(char rune) (*sdl.Texture, []int32) {
 	}
 
 	texture, err := r.Renderer.CreateTextureFromSurface(surface)
+	if err != nil {
+		panic(err)
+	}
 
 	// TODO we could store how many times
 	// these get used and then run a thread to free
 	// some of the unused textures every now and then?
 	allocs++
 
-	log.Println("allocs:", allocs)
-	if err != nil {
-		panic(err)
-	}
 	return texture, []int32{surface.W, surface.H}
 }
 
