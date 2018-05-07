@@ -22,6 +22,11 @@ func (c Color) ToSDLColor() sdl.Color {
 	return sdl.Color{c.R, c.G, c.B, c.A}
 }
 
+func (c Color) AsHex() int {
+	res := int(((c.R & 0xff) << 16) | ((c.G & 0xff) << 8) | (c.B & 0xff))
+	return res
+}
+
 // TODO: alpha channel >> 24.
 func HexRGB(col int32) *Color {
 	a := uint8(255)

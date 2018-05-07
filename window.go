@@ -2,6 +2,8 @@ package strife
 
 import (
 	"fmt"
+	"log"
+	"reflect"
 	"runtime"
 
 	"github.com/veandco/go-sdl2/sdl"
@@ -128,7 +130,11 @@ func (w *RenderWindow) PollEvents() {
 			case sdl.WINDOWEVENT_FOCUS_LOST:
 				w.handler(&WindowFocusEvent{BaseEvent{}, FocusGained})
 			}
+
+		default:
+			log.Println("unhandled event!", reflect.TypeOf(evt), evt)
 		}
+
 	}
 }
 

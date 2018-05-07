@@ -2,6 +2,7 @@ package strife
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/veandco/go-sdl2/sdl"
 )
@@ -93,47 +94,66 @@ func maxInt32(a, b int32) int32 {
 	return b
 }
 
+var allocs int
+
+func (r *Renderer) renderRune(char rune) (*sdl.Texture, []int32) {
+	message := string(char)
+
+	var surface *sdl.Surface
+	var err error
+	if r.Alias {
+		surface, err = r.font.RenderUTF8Blended(message, r.color.ToSDLColor())
+	} else {
+		surface, err = r.font.RenderUTF8Solid(message, r.color.ToSDLColor())
+	}
+	defer surface.Free()
+	if err != nil {
+		panic(err)
+	}
+
+	texture, err := r.Renderer.CreateTextureFromSurface(surface)
+
+	// TODO we could store how many times
+	// these get used and then run a thread to free
+	// some of the unused textures every now and then?
+	allocs++
+
+	log.Println("allocs:", allocs)
+	if err != nil {
+		panic(err)
+	}
+	return texture, []int32{surface.W, surface.H}
+}
+
 func (r *Renderer) String(message string, x, y int) (int, int) {
 	if r.font == nil {
 		panic("Attempted to render '" + message + "' but no font is set!")
-	}
-
-	renderRune := func(char rune) (*sdl.Texture, []int32) {
-		message := string(char)
-
-		var surface *sdl.Surface
-		var err error
-		if r.Alias {
-			surface, err = r.font.RenderUTF8Blended(message, r.color.ToSDLColor())
-		} else {
-			surface, err = r.font.RenderUTF8Solid(message, r.color.ToSDLColor())
-		}
-		defer surface.Free()
-		if err != nil {
-			panic(err)
-		}
-
-		texture, err := r.Renderer.CreateTextureFromSurface(surface)
-		if err != nil {
-			panic(err)
-		}
-		return texture, []int32{surface.W, surface.H}
 	}
 
 	var width, height int32
 	for _, char := range message {
 		glyph, ok := r.font.CharCache[char]
 
-		// NOTE: we could either re-cache for different
-		// colours... or we could also store the other colours ??
-		// some kind of array for each colour variant probably
-		// sorted by most often called for extra fastness
-		if !ok || !glyph.Col.Equals(r.color) {
-			texture, dim := renderRune(char)
-			glyph = &Glyph{texture, dim[0], dim[1], r.color}
+		// no glyph has been cached
+		// so cache one
+		if !ok {
+			texture, dim := r.renderRune(char)
+			glyph = NewGlyph(dim[0], dim[1], r.color, texture)
+
 			r.font.CharCache[char] = glyph
 		}
-		r.Renderer.Copy(glyph.Texture, nil, &sdl.Rect{int32(x) + width, int32(y), glyph.w, glyph.h})
+
+		// we don't have the correct color
+		glyphTexture, ok := glyph.texs[r.color.AsHex()]
+		if !ok {
+			glyphTexture, _ = r.renderRune(char)
+			glyph.texs[r.color.AsHex()] = glyphTexture
+
+			// store that boy
+			r.font.CharCache[char] = glyph
+		}
+
+		r.Renderer.Copy(glyphTexture, nil, &sdl.Rect{int32(x) + width, int32(y), glyph.w, glyph.h})
 		width += glyph.w
 		height = maxInt32(height, glyph.h)
 	}
@@ -162,6 +182,7 @@ func (r *Renderer) UncachedString(message string, x, y int) (int, int) {
 	if err != nil {
 		panic(err)
 	}
+
 	r.Renderer.Copy(texture, nil, &sdl.Rect{int32(x), int32(y), surface.W, surface.H})
 	return int(surface.W), int(surface.H)
 }

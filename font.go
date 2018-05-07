@@ -2,6 +2,7 @@ package strife
 
 import (
 	"fmt"
+
 	"github.com/veandco/go-sdl2/sdl"
 	ttf "github.com/veandco/go-sdl2/ttf"
 )
@@ -9,9 +10,19 @@ import (
 var fontLoaderInitialized bool = false
 
 type Glyph struct {
-	*sdl.Texture
+	texs map[int]*sdl.Texture
 	w, h int32
 	Col  *Color
+}
+
+func NewGlyph(w, h int32, Col *Color, tex *sdl.Texture) *Glyph {
+	textures := map[int]*sdl.Texture{}
+	textures[Col.AsHex()] = tex
+	return &Glyph{
+		textures,
+		w, h,
+		Col,
+	}
 }
 
 type Font struct {
@@ -37,7 +48,9 @@ func LoadFont(path string, size int) (*Font, error) {
 
 func (f *Font) Destroy() {
 	for _, g := range f.CharCache {
-		g.Destroy()
+		for _, tex := range g.texs {
+			tex.Destroy()
+		}
 	}
 	f.Font.Close()
 }
