@@ -17,6 +17,15 @@ func HandleEvent(event StrifeEvent) {
 
 type BaseEvent struct{}
 
+func (b *BaseEvent) GetTimestamp() uint32 {
+	// ?!
+	return 0
+}
+
+func (b *BaseEvent) GetType() uint32 {
+	return 0 // ?
+}
+
 func (b *BaseEvent) Trigger() {}
 
 // MOUSE EVENTS
