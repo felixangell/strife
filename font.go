@@ -12,7 +12,6 @@ var fontLoaderInitialized bool = false
 type Glyph struct {
 	texs map[int]*sdl.Texture
 	w, h int32
-	Col  *Color
 }
 
 func NewGlyph(w, h int32, Col *Color, tex *sdl.Texture) *Glyph {
@@ -21,7 +20,6 @@ func NewGlyph(w, h int32, Col *Color, tex *sdl.Texture) *Glyph {
 	return &Glyph{
 		textures,
 		w, h,
-		Col,
 	}
 }
 

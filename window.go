@@ -2,8 +2,6 @@ package strife
 
 import (
 	"fmt"
-	"log"
-	"reflect"
 	"runtime"
 
 	"github.com/veandco/go-sdl2/sdl"
@@ -132,7 +130,7 @@ func (w *RenderWindow) PollEvents() {
 			}
 
 		default:
-			log.Println("unhandled event!", reflect.TypeOf(evt), evt)
+			// log.Println("unhandled event!", reflect.TypeOf(evt), evt)
 		}
 
 	}
