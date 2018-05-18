@@ -22,6 +22,12 @@ type KeyboardHandler struct {
 	buff []int
 }
 
+type MouseHandler struct {
+	X, Y int
+}
+
+var mouseInstance = &MouseHandler{}
+
 var keyboardInstance = &KeyboardHandler{
 	keys: map[int]bool{},
 	buff: []int{},
@@ -45,6 +51,10 @@ func PopKey() int {
 
 func KeyState() []uint8 {
 	return sdl.GetKeyboardState()
+}
+
+func MouseState() []int {
+	return []int{mouseInstance.X, mouseInstance.Y}
 }
 
 func KeyPressed(keyCode int) bool {
@@ -99,6 +109,11 @@ func (w *RenderWindow) PollEvents() {
 				// buffer which can be processed.
 				keyboardInstance.buff = append(keyboardInstance.buff, keyCode)
 			}
+
+		case *sdl.MouseMotionEvent:
+			w.handler(&MouseMoveEvent{BaseEvent{}, int(evt.X), int(evt.Y)})
+			mouseInstance.X = int(evt.X)
+			mouseInstance.Y = int(evt.Y)
 
 		case *sdl.MouseWheelEvent:
 			w.handler(&MouseWheelEvent{BaseEvent{}, int(evt.X), int(evt.Y)})

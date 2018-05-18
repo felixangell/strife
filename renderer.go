@@ -232,6 +232,8 @@ func CreateRenderer(parent *RenderWindow, config *RenderConfig) (*Renderer, erro
 		return nil, fmt.Errorf("Failed to create render context")
 	}
 
+	renderInst.SetDrawBlendMode(sdl.BLENDMODE_BLEND)
+
 	renderer := &Renderer{
 		RenderConfig: *config,
 		Renderer:     renderInst,

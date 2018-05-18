@@ -35,6 +35,11 @@ type MouseWheelEvent struct {
 	X, Y int
 }
 
+type MouseMoveEvent struct {
+	BaseEvent
+	X, Y int
+}
+
 // KEYBOARD
 
 type KeyUpEvent struct {

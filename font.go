@@ -50,6 +50,7 @@ func (r *Font) hasGlyph(g glyphInfo) (*glyph, bool) {
 func (f *Font) cache(g glyphInfo, texture *sdl.Texture, dim []int32) *glyph {
 	// todo cache collision?
 	glyph := &glyph{texture, dim}
+	texture.SetBlendMode(sdl.BLENDMODE_BLEND)
 	f.texCache[g] = glyph
 	return glyph
 }
