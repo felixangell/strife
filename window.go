@@ -43,6 +43,10 @@ func PopKey() int {
 	return keyPressed
 }
 
+func KeyState() []uint8 {
+	return sdl.GetKeyboardState()
+}
+
 func KeyPressed(keyCode int) bool {
 	if val, ok := keyboardInstance.keys[keyCode]; ok {
 		return val

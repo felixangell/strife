@@ -100,12 +100,15 @@ func (r *Renderer) renderRune(char rune) (*sdl.Texture, []int32) {
 
 	var surface *sdl.Surface
 	var err error
+
 	if r.Alias {
 		surface, err = r.font.RenderUTF8Blended(message, r.color.ToSDLColor())
 	} else {
 		surface, err = r.font.RenderUTF8Solid(message, r.color.ToSDLColor())
 	}
+
 	defer surface.Free()
+
 	if err != nil {
 		panic(err)
 	}
@@ -129,32 +132,23 @@ func (r *Renderer) String(message string, x, y int) (int, int) {
 	}
 
 	var width, height int32
-	for _, char := range message {
-		glyph, ok := r.font.CharCache[char]
 
-		// no glyph has been cached
-		// so cache one
+	for _, char := range message {
+		encoding := encode(r.color.AsHex(), plain, char)
+
+		glyph, ok := r.font.hasGlyph(encoding)
 		if !ok {
 			texture, dim := r.renderRune(char)
-			glyph = NewGlyph(dim[0], dim[1], r.color, texture)
-
-			r.font.CharCache[char] = glyph
+			glyph = r.font.cache(encoding, texture, dim)
 		}
 
-		// we don't have the correct color
-		glyphTexture, ok := glyph.texs[r.color.AsHex()]
-		if !ok {
-			glyphTexture, _ = r.renderRune(char)
-			glyph.texs[r.color.AsHex()] = glyphTexture
+		dim := glyph.dim
 
-			// store that boy
-			r.font.CharCache[char] = glyph
-		}
-
-		r.Renderer.Copy(glyphTexture, nil, &sdl.Rect{int32(x) + width, int32(y), glyph.w, glyph.h})
-		width += glyph.w
-		height = maxInt32(height, glyph.h)
+		r.Renderer.Copy(glyph.tex, nil, &sdl.Rect{int32(x) + width, int32(y), dim[0], dim[1]})
+		width += dim[0]
+		height = maxInt32(height, dim[1])
 	}
+
 	return int(width), int(height)
 }
 

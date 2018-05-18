@@ -9,23 +9,49 @@ import (
 
 var fontLoaderInitialized bool = false
 
-type Glyph struct {
-	texs map[int]*sdl.Texture
-	w, h int32
+type fontStyle int
+
+const (
+	plain fontStyle = iota
+	underline
+	bold
+	strike
+)
+
+type glyph struct {
+	tex *sdl.Texture
+	dim []int32
 }
 
-func NewGlyph(w, h int32, Col *Color, tex *sdl.Texture) *Glyph {
-	textures := map[int]*sdl.Texture{}
-	textures[Col.AsHex()] = tex
-	return &Glyph{
-		textures,
-		w, h,
+type glyphInfo struct {
+	val   rune
+	col   int
+	style fontStyle
+}
+
+func encode(col int, style fontStyle, val rune) glyphInfo {
+	return glyphInfo{
+		val: val, col: col, style: style,
 	}
 }
 
 type Font struct {
 	*ttf.Font
-	CharCache map[rune]*Glyph
+	texCache map[glyphInfo]*glyph
+}
+
+func (r *Font) hasGlyph(g glyphInfo) (*glyph, bool) {
+	if val, ok := r.texCache[g]; ok {
+		return val, true
+	}
+	return nil, false
+}
+
+func (f *Font) cache(g glyphInfo, texture *sdl.Texture, dim []int32) *glyph {
+	// todo cache collision?
+	glyph := &glyph{texture, dim}
+	f.texCache[g] = glyph
+	return glyph
 }
 
 func LoadFont(path string, size int) (*Font, error) {
@@ -40,15 +66,13 @@ func LoadFont(path string, size int) (*Font, error) {
 
 	return &Font{
 		font,
-		map[rune]*Glyph{},
+		map[glyphInfo]*glyph{},
 	}, nil
 }
 
 func (f *Font) Destroy() {
-	for _, g := range f.CharCache {
-		for _, tex := range g.texs {
-			tex.Destroy()
-		}
+	for _, glyph := range f.texCache {
+		glyph.tex.Destroy()
 	}
 	f.Font.Close()
 }
