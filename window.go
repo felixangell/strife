@@ -22,8 +22,18 @@ type KeyboardHandler struct {
 	buff []int
 }
 
+type MouseButtonState int
+
+const (
+	NoMouseButtonsDown MouseButtonState = iota
+	LeftMouseButton
+	RightMouseButton
+	ScrollWheel
+)
+
 type MouseHandler struct {
-	X, Y int
+	X, Y        int
+	ButtonState MouseButtonState
 }
 
 var mouseInstance = &MouseHandler{}
@@ -53,7 +63,11 @@ func KeyState() []uint8 {
 	return sdl.GetKeyboardState()
 }
 
-func MouseState() []int {
+func MouseButtonsState() MouseButtonState {
+	return mouseInstance.ButtonState
+}
+
+func MouseCoords() []int {
 	return []int{mouseInstance.X, mouseInstance.Y}
 }
 
@@ -91,6 +105,8 @@ func (w *RenderWindow) HandleEvents(handler func(StrifeEvent)) {
 // destroy the render context, render window, and cause
 // this function to return true.
 func (w *RenderWindow) PollEvents() {
+	mouseInstance.ButtonState = NoMouseButtonsDown
+
 	for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
 		switch evt := event.(type) {
 		case *sdl.QuitEvent:
@@ -108,6 +124,16 @@ func (w *RenderWindow) PollEvents() {
 				// append the key press into a key
 				// buffer which can be processed.
 				keyboardInstance.buff = append(keyboardInstance.buff, keyCode)
+			}
+
+		case *sdl.MouseButtonEvent:
+			switch evt.Button {
+			case sdl.BUTTON_LEFT:
+				mouseInstance.ButtonState = LeftMouseButton
+			case sdl.BUTTON_MIDDLE:
+				mouseInstance.ButtonState = ScrollWheel
+			case sdl.BUTTON_RIGHT:
+				mouseInstance.ButtonState = RightMouseButton
 			}
 
 		case *sdl.MouseMotionEvent:
