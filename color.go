@@ -1,6 +1,11 @@
 package strife
 
-import "github.com/veandco/go-sdl2/sdl"
+import (
+	"fmt"
+	"log"
+
+	"github.com/veandco/go-sdl2/sdl"
+)
 
 var (
 	Black *Color = RGB(0, 0, 0)
@@ -23,21 +28,29 @@ func (c Color) ToSDLColor() sdl.Color {
 }
 
 func (c Color) AsHex() int {
-	res := int(((c.R & 0xff) << 16) | ((c.G & 0xff) << 8) | (c.B & 0xff))
-	return res
+	return int(((c.R & 0xff) << 16) + ((c.G & 0xff) << 8) + (c.B & 0xff))
 }
+
+var colorCache = map[int32]*Color{}
 
 // TODO: alpha channel >> 24.
 func HexRGB(col int32) *Color {
-	a := uint8(255)
 	r := uint8(col & 0xff0000 >> 16)
 	g := uint8(col & 0xff00 >> 8)
 	b := uint8(col & 0xff)
-	return RGBA(r, g, b, a)
+
+	if col, ok := colorCache[col]; ok {
+		return col
+	}
+	colour := &Color{r, g, b, 255}
+	colorCache[col] = colour
+	log.Println("cached color ", fmt.Sprintf("0x%x", colour.AsHex()), " caches: ", len(colorCache))
+	return colour
 }
 
 func RGBA(r, g, b, a uint8) *Color {
-	return &Color{r, g, b, a}
+	res := int32(((r & 0xff) << 16) | ((g & 0xff) << 8) | (b & 0xff))
+	return HexRGB(res)
 }
 
 func RGB(r, g, b uint8) *Color {

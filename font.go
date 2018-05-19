@@ -29,6 +29,10 @@ type glyphInfo struct {
 	style fontStyle
 }
 
+func (g *glyphInfo) asKey() string {
+	return string(g.val) + fmt.Sprintf("%d", g.col) + fmt.Sprintf("%d", int(g.style))
+}
+
 func encode(col int, style fontStyle, val rune) glyphInfo {
 	return glyphInfo{
 		val: val, col: col, style: style,
@@ -37,11 +41,11 @@ func encode(col int, style fontStyle, val rune) glyphInfo {
 
 type Font struct {
 	*ttf.Font
-	texCache map[glyphInfo]*glyph
+	texCache map[string]*glyph
 }
 
 func (r *Font) hasGlyph(g glyphInfo) (*glyph, bool) {
-	if val, ok := r.texCache[g]; ok {
+	if val, ok := r.texCache[g.asKey()]; ok {
 		return val, true
 	}
 	return nil, false
@@ -51,7 +55,7 @@ func (f *Font) cache(g glyphInfo, texture *sdl.Texture, dim []int32) *glyph {
 	// todo cache collision?
 	glyph := &glyph{texture, dim}
 	texture.SetBlendMode(sdl.BLENDMODE_BLEND)
-	f.texCache[g] = glyph
+	f.texCache[g.asKey()] = glyph
 	return glyph
 }
 
@@ -67,7 +71,7 @@ func LoadFont(path string, size int) (*Font, error) {
 
 	return &Font{
 		font,
-		map[glyphInfo]*glyph{},
+		map[string]*glyph{},
 	}, nil
 }
 

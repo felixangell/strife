@@ -2,6 +2,7 @@ package strife
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/veandco/go-sdl2/sdl"
 )
@@ -122,6 +123,7 @@ func (r *Renderer) renderRune(char rune) (*sdl.Texture, []int32) {
 	// these get used and then run a thread to free
 	// some of the unused textures every now and then?
 	allocs++
+	log.Println("allocs ", allocs)
 
 	return texture, []int32{surface.W, surface.H}
 }
@@ -133,8 +135,9 @@ func (r *Renderer) String(message string, x, y int) (int, int) {
 
 	var width, height int32
 
+	col := r.color.AsHex()
 	for _, char := range message {
-		encoding := encode(r.color.AsHex(), plain, char)
+		encoding := encode(col, plain, char)
 
 		glyph, ok := r.font.hasGlyph(encoding)
 		if !ok {
