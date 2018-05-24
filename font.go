@@ -41,7 +41,12 @@ func encode(col uint32, style fontStyle, val rune) glyphInfo {
 
 type Font struct {
 	*ttf.Font
+	path     string
 	texCache map[string]*glyph
+}
+
+func (r *Font) DeriveFont(size int) (*Font, error) {
+	return LoadFont(r.path, size)
 }
 
 func (r *Font) hasGlyph(g glyphInfo) (*glyph, bool) {
@@ -71,6 +76,7 @@ func LoadFont(path string, size int) (*Font, error) {
 
 	return &Font{
 		font,
+		path,
 		map[string]*glyph{},
 	}, nil
 }

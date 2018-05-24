@@ -86,6 +86,10 @@ func (r *Renderer) Rect(x, y, w, h int, mode Style) {
 	}
 }
 
+func (r *Renderer) GetFont() *Font {
+	return r.font
+}
+
 func (r *Renderer) SetFont(font *Font) {
 	r.font = font
 }
