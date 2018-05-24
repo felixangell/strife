@@ -1,10 +1,18 @@
 # strife
 A simple game framework that wraps around SDL2.
 
-## notes
+## example
+The biggest example use of the Strife framework is the [Phi text editor](//phi.felixangell.com)
+
+<p align="center"><img src="https://raw.githubusercontent.com/felixangell/phi/master/screenshot.png"></p>
+
+Though there are some smaller examples demonstrating components of the Strife API in the `examples/` folder.
+
+## note/disclaimer
 This is a work in progress. It provides a very minimal toolset for rendering shapes, images, and text
 as well as capturing user input. This is not at a production level and is mostly being worked on when the
 needs of my other projects (that depend on this) evolve.
+
 There is no documentation either! If you want to use it you will have to check out the examples. I may
 get round to writing some documentation but the API is very volatile at the moment.
 
@@ -16,15 +24,6 @@ Simple as
 Make sure you have SDL2 installed as well as the ttf and img addons:
 
 	$ brew install SDL2 SDL2_ttf SDL2_img
-
-## example
-There are some simple examples in the `example/` directory. Try them out:
-
-	$ cd example/images
-	$ go run images.go
-
-In addition I have a small (rarely worked on) text-editor written 
-using the strife framework you can find [here](//github.com/felixangell/phi-editor).
 
 ## getting started
 This is a commented code snippet to help you get started:
