@@ -1,18 +1,15 @@
 package strife
 
 import (
-	"fmt"
-	"log"
-
 	"github.com/veandco/go-sdl2/sdl"
 )
 
 var (
-	Black *Color = RGB(0, 0, 0)
-	White        = RGB(255, 255, 255)
+	White *Color = RGB(255, 255, 255)
 	Red          = RGB(255, 0, 0)
 	Green        = RGB(0, 255, 0)
 	Blue         = RGB(0, 0, 255)
+	Black        = RGB(0, 0, 0)
 )
 
 type Color struct {
@@ -45,13 +42,11 @@ func HexRGB(col uint32) *Color {
 	}
 	colour := &Color{r, g, b, 255}
 	colorCache[col] = colour
-	log.Println("extracted as:", r, g, b)
 	return colour
 }
 
 func RGBA(r, g, b, a int) *Color {
 	result := uint32(((r & 0xff) << 16) + ((g & 0xff) << 8) + (b & 0xff))
-	log.Println("values:", r, g, b, "encoded to:", fmt.Sprintf("0x%x", result))
 	return HexRGB(result)
 }
 

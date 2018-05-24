@@ -2,7 +2,6 @@ package strife
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/veandco/go-sdl2/sdl"
 )
@@ -122,8 +121,11 @@ func (r *Renderer) renderRune(char rune) (*sdl.Texture, []int32) {
 	// TODO we could store how many times
 	// these get used and then run a thread to free
 	// some of the unused textures every now and then?
+	// or an LRU cache or something?
+	// or memory pool allocation?
 	allocs++
-	log.Println("allocs ", allocs)
+
+	// log.Println("allocs ", allocs)
 
 	return texture, []int32{surface.W, surface.H}
 }
