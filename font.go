@@ -25,7 +25,7 @@ type glyph struct {
 
 type glyphInfo struct {
 	val   rune
-	col   int
+	col   uint32
 	style fontStyle
 }
 
@@ -33,7 +33,7 @@ func (g *glyphInfo) asKey() string {
 	return string(g.val) + fmt.Sprintf("%d", g.col) + fmt.Sprintf("%d", int(g.style))
 }
 
-func encode(col int, style fontStyle, val rune) glyphInfo {
+func encode(col uint32, style fontStyle, val rune) glyphInfo {
 	return glyphInfo{
 		val: val, col: col, style: style,
 	}

@@ -27,32 +27,34 @@ func (c Color) ToSDLColor() sdl.Color {
 	return sdl.Color{c.R, c.G, c.B, c.A}
 }
 
-func (c Color) AsHex() int {
-	return int(((c.R & 0xff) << 16) + ((c.G & 0xff) << 8) + (c.B & 0xff))
+func (c Color) AsHex() uint32 {
+	result := uint32((c.R << 16) + (c.G << 8) + c.B)
+	return result
 }
 
-var colorCache = map[int32]*Color{}
+var colorCache = map[uint32]*Color{}
 
 // TODO: alpha channel >> 24.
-func HexRGB(col int32) *Color {
-	r := uint8(col & 0xff0000 >> 16)
-	g := uint8(col & 0xff00 >> 8)
-	b := uint8(col & 0xff)
+func HexRGB(col uint32) *Color {
+	r := uint8((col >> 16) & 0xff)
+	g := uint8((col >> 8) & 0xff)
+	b := uint8((col) & 0xff)
 
 	if col, ok := colorCache[col]; ok {
 		return col
 	}
 	colour := &Color{r, g, b, 255}
 	colorCache[col] = colour
-	log.Println("cached color ", fmt.Sprintf("0x%x", colour.AsHex()), " caches: ", len(colorCache))
+	log.Println("extracted as:", r, g, b)
 	return colour
 }
 
-func RGBA(r, g, b, a uint8) *Color {
-	res := int32(((r & 0xff) << 16) | ((g & 0xff) << 8) | (b & 0xff))
-	return HexRGB(res)
+func RGBA(r, g, b, a int) *Color {
+	result := uint32(((r & 0xff) << 16) + ((g & 0xff) << 8) + (b & 0xff))
+	log.Println("values:", r, g, b, "encoded to:", fmt.Sprintf("0x%x", result))
+	return HexRGB(result)
 }
 
-func RGB(r, g, b uint8) *Color {
+func RGB(r, g, b int) *Color {
 	return RGBA(r, g, b, 255)
 }
