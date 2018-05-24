@@ -2,6 +2,7 @@ package strife
 
 import (
 	"fmt"
+	"log"
 	"runtime"
 
 	"github.com/veandco/go-sdl2/sdl"
@@ -223,6 +224,13 @@ func (w *RenderWindow) GetSize() (int, int) {
 // Note that this will spawn the window at the centre of the main
 // display.
 func SetupRenderWindow(w, h int, config *RenderConfig) *RenderWindow {
+	log.Println("initializing window ", w, "x", h)
+
+	EnableDPI()
+
+	a, b := GetDisplayDPI(0)
+	log.Println("dpi, default_dpi = ", a, b)
+
 	sdl.Init(sdl.INIT_VIDEO)
 
 	window := &RenderWindow{
@@ -230,11 +238,13 @@ func SetupRenderWindow(w, h int, config *RenderConfig) *RenderWindow {
 		w:      w,
 		h:      h,
 	}
+
 	window.handler = func(evt StrifeEvent) {
 		switch evt.(type) {
 		case *CloseEvent:
 			window.Close()
 		}
 	}
+
 	return window
 }

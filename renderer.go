@@ -32,6 +32,17 @@ type RenderConfig struct {
 	VerticalSync bool
 }
 
+// FastConfig is the default configuration
+// with all pretty settings turned off.
+// vertical synchronisation is enabled.
+func GoGoStrifeFast() *RenderConfig {
+	return &RenderConfig{
+		Alias:        false,
+		Accelerated:  true,
+		VerticalSync: true,
+	}
+}
+
 // DefaultConfig with all of the rendering options
 // enabled.
 func DefaultConfig() *RenderConfig {
