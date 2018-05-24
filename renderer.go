@@ -2,6 +2,10 @@ package strife
 
 import (
 	"fmt"
+	"log"
+	"os"
+	"path/filepath"
+	"runtime"
 
 	"github.com/veandco/go-sdl2/sdl"
 )
@@ -237,6 +241,53 @@ func CreateRenderer(parent *RenderWindow, config *RenderConfig) (*Renderer, erro
 		return nil, fmt.Errorf("Failed to create render context")
 	}
 
+	// find a default font
+	fontFolder := func() string {
+		switch runtime.GOOS {
+		case "windows":
+			return filepath.Join(os.Getenv("WINDIR"), "fonts")
+		case "darwin":
+			return "/Library/Fonts/"
+		case "linux":
+			// FIXME
+			return "/usr/share/fonts/"
+		default:
+			log.Fatal("no font folder set for OS ", runtime.GOOS)
+			panic("oh boy!")
+		}
+	}()
+
+	fontChoices := map[string]bool{}
+	filepath.Walk(fontFolder, func(path string, r os.FileInfo, err error) error {
+		fontChoices[filepath.Base(path)] = true
+		return nil
+	})
+
+	chosenFont := func() string {
+		defaultFontChoices := []string{
+			"calibri.ttf", "verdana.ttf", // todo add more fonts.
+		}
+		for _, font := range defaultFontChoices {
+			if _, exists := fontChoices[font]; exists {
+				return font
+			}
+		}
+		return ""
+	}()
+
+	if chosenFont == "" {
+		panic(err.Error())
+	}
+
+	fontPath := filepath.Join(fontFolder, chosenFont)
+	log.Println("Loading font ", fontPath)
+
+	// load a default font to render with.
+	defaultFont, err := LoadFont(fontPath, 24)
+	if err != nil {
+		log.Fatal("Failed to load default font '", fontPath, "' try setting a font yourself with strife.LoadFont")
+	}
+
 	renderInst.SetDrawBlendMode(sdl.BLENDMODE_BLEND)
 
 	renderer := &Renderer{
@@ -244,5 +295,6 @@ func CreateRenderer(parent *RenderWindow, config *RenderConfig) (*Renderer, erro
 		Renderer:     renderInst,
 		color:        RGB(255, 255, 255),
 	}
+	renderer.SetFont(defaultFont)
 	return renderer, nil
 }
