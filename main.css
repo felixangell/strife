@@ -158,7 +158,7 @@ header nav ul li a {
 }
 
 /* tablets */
-@media only screen and (max-width: 768px) and (min-width: 600px) {
+@media only screen and (max-width: 1280px) and (min-width: 600px) {
 	#wrapper {
 		width: 100%;
 	}
