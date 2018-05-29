@@ -66,6 +66,7 @@ header {
 
 .terminal {
 	display: block;
+	overflow: scroll;
 	background: #FFFFFF;
 	border-radius: 5px;
 	padding: 15px;
@@ -154,4 +155,51 @@ header nav ul li a {
 	margin: 0 auto;
 	margin: 15px;
 	border: 0.4px solid #BDBDBD;
+}
+
+/* tablets */
+@media only screen and (max-width: 768px) and (min-width: 600px) {
+	#wrapper {
+		width: 100%;
+	}
+
+	.col-half {
+		width: 100%;
+	}
+}
+
+/* phones */
+@media only screen and (max-width: 600px) {
+	#wrapper {
+		width: 90%;
+	}
+
+	header nav {
+		width: 100%;
+	}
+
+	header nav ul {
+		flex-wrap: wrap;
+		flex-direction: column;
+		width: 100%;
+	}
+
+	header nav ul li {
+		width: 100%;
+	}
+
+	.col-full {
+		flex-grow: 1;
+		width: 100%;
+	}
+
+	.col-half {
+		flex-grow: 1;
+		width: 100%;
+	}
+
+	.col-third {
+		flex-grow: 1;
+		width: 100%;
+	}
 }
