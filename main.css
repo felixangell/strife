@@ -41,7 +41,7 @@ body {
 	align-items: center;
 	justify-content: center;
 
-	font-family: 'Helvetica Neue';
+	font-family: 'Helvetica Neue', sans-serif;
 	font-size: 14pt;
 
 	background: #fff;
