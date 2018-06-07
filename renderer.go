@@ -274,13 +274,20 @@ func CreateRenderer(parent *RenderWindow, config *RenderConfig) (*Renderer, erro
 
 	fontChoices := map[string]bool{}
 	filepath.Walk(fontFolder, func(path string, r os.FileInfo, err error) error {
-		fontChoices[filepath.Base(path)] = true
+		fontName := filepath.Base(path)
+		log.Println("- ", fontName)
+		fontChoices[fontName] = true
 		return nil
 	})
 
 	chosenFont := func() string {
 		defaultFontChoices := []string{
-			"calibri.ttf", "verdana.ttf", // todo add more fonts.
+			// todo add more fonts.
+			// maybe depending on the platform
+			// we can sort them manually
+			// e.g. georgia first on mac, calibiri first on windows
+			// for faster lookup?
+			"Verdana.ttf", "calibri.ttf", "verdana.ttf",
 		}
 		for _, font := range defaultFontChoices {
 			if _, exists := fontChoices[font]; exists {
