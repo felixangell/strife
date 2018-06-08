@@ -18,67 +18,6 @@ func init() {
 	runtime.LockOSThread()
 }
 
-type KeyboardHandler struct {
-	keys map[int]bool
-	buff []int
-}
-
-type MouseButtonState int
-
-const (
-	NoMouseButtonsDown MouseButtonState = iota
-	LeftMouseButton
-	RightMouseButton
-	ScrollWheel
-)
-
-type MouseHandler struct {
-	X, Y        int
-	ButtonState MouseButtonState
-}
-
-var mouseInstance = &MouseHandler{}
-
-var keyboardInstance = &KeyboardHandler{
-	keys: map[int]bool{},
-	buff: []int{},
-}
-
-func PollKeys() bool {
-	return len(keyboardInstance.buff) > 0
-}
-
-func PopKey() int {
-	keyBuffSize := len(keyboardInstance.buff)
-
-	// get the key
-	keyPressed := keyboardInstance.buff[keyBuffSize-1]
-
-	// apply pop
-	keyboardInstance.buff = keyboardInstance.buff[:keyBuffSize-1]
-
-	return keyPressed
-}
-
-func KeyState() []uint8 {
-	return sdl.GetKeyboardState()
-}
-
-func MouseButtonsState() MouseButtonState {
-	return mouseInstance.ButtonState
-}
-
-func MouseCoords() []int {
-	return []int{mouseInstance.X, mouseInstance.Y}
-}
-
-func KeyPressed(keyCode int) bool {
-	if val, ok := keyboardInstance.keys[keyCode]; ok {
-		return val
-	}
-	return false
-}
-
 type RenderWindow struct {
 	*sdl.Window
 	config         *RenderConfig
@@ -106,8 +45,6 @@ func (w *RenderWindow) HandleEvents(handler func(StrifeEvent)) {
 // destroy the render context, render window, and cause
 // this function to return true.
 func (w *RenderWindow) PollEvents() {
-	mouseInstance.ButtonState = NoMouseButtonsDown
-
 	for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
 		switch evt := event.(type) {
 		case *sdl.QuitEvent:
@@ -128,6 +65,11 @@ func (w *RenderWindow) PollEvents() {
 			}
 
 		case *sdl.MouseButtonEvent:
+			if evt.Type == sdl.MOUSEBUTTONUP {
+				mouseInstance.ButtonState = NoMouseButtonsDown
+				return
+			}
+
 			switch evt.Button {
 			case sdl.BUTTON_LEFT:
 				mouseInstance.ButtonState = LeftMouseButton
@@ -141,6 +83,17 @@ func (w *RenderWindow) PollEvents() {
 			w.handler(&MouseMoveEvent{BaseEvent{}, int(evt.X), int(evt.Y)})
 			mouseInstance.X = int(evt.X)
 			mouseInstance.Y = int(evt.Y)
+
+			switch evt.State {
+			case sdl.BUTTON_LEFT:
+				mouseInstance.ButtonState = LeftMouseButton
+			case sdl.BUTTON_MIDDLE:
+				mouseInstance.ButtonState = ScrollWheel
+			case sdl.BUTTON_RIGHT:
+				mouseInstance.ButtonState = RightMouseButton
+			default:
+				mouseInstance.ButtonState = NoMouseButtonsDown
+			}
 
 		case *sdl.MouseWheelEvent:
 			w.handler(&MouseWheelEvent{BaseEvent{}, int(evt.X), int(evt.Y)})
