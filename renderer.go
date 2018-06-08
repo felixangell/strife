@@ -275,7 +275,6 @@ func CreateRenderer(parent *RenderWindow, config *RenderConfig) (*Renderer, erro
 	fontChoices := map[string]bool{}
 	filepath.Walk(fontFolder, func(path string, r os.FileInfo, err error) error {
 		fontName := filepath.Base(path)
-		log.Println("- ", fontName)
 		fontChoices[fontName] = true
 		return nil
 	})

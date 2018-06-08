@@ -186,6 +186,7 @@ func (w *RenderWindow) GetRenderContext() *Renderer {
 	return w.renderContext
 }
 
+// TODO make this private
 func (w *RenderWindow) Close() {
 	w.closeRequested = true
 	w.renderContext.Destroy()
