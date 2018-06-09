@@ -75,6 +75,16 @@ func (r *Renderer) Clear() {
 	r.SetColor(White)
 }
 
+// GetSize returns the size of the renderer. on error
+// it will return -1, -1
+func (r *Renderer) GetSize() (int, int) {
+	w, h, err := r.Renderer.GetOutputSize()
+	if err != nil {
+		return -1, -1
+	}
+	return int(w), int(h)
+}
+
 func (r *Renderer) Display() {
 	r.Renderer.Present()
 }
