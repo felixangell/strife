@@ -12,7 +12,7 @@ func defaultDpi() float32 {
 	} else if runtime.GOOS == "darwin" {
 		return 72.0
 	}
-	panic("no dpi for this os")
+	return 72.0 // hm!?
 }
 
 // returns the dpi, and the default dpi
