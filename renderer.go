@@ -297,6 +297,7 @@ func CreateRenderer(parent *RenderWindow, config *RenderConfig) (*Renderer, erro
 			// e.g. georgia first on mac, calibiri first on windows
 			// for faster lookup?
 			"Verdana.ttf", "calibri.ttf", "verdana.ttf",
+			"Ubuntu.ttf", "DejaVuSans.ttf",
 		}
 		for _, font := range defaultFontChoices {
 			if _, exists := fontChoices[font]; exists {
@@ -313,12 +314,6 @@ func CreateRenderer(parent *RenderWindow, config *RenderConfig) (*Renderer, erro
 	fontPath := filepath.Join(fontFolder, chosenFont)
 	log.Println("Loading font ", fontPath)
 
-	// load a default font to render with.
-	defaultFont, err := LoadFont(fontPath, 24)
-	if err != nil {
-		log.Fatal("Failed to load default font '", fontPath, "' try setting a font yourself with strife.LoadFont")
-	}
-
 	renderInst.SetDrawBlendMode(sdl.BLENDMODE_BLEND)
 
 	renderer := &Renderer{
@@ -326,6 +321,14 @@ func CreateRenderer(parent *RenderWindow, config *RenderConfig) (*Renderer, erro
 		Renderer:     renderInst,
 		color:        RGB(255, 255, 255),
 	}
-	renderer.SetFont(defaultFont)
+
+	// load a default font to render with.
+	defaultFont, err := LoadFont(fontPath, 24)
+	if err == nil {
+		renderer.SetFont(defaultFont)
+	} else {
+		log.Println(err.Error(), "' try setting a font yourself with strife.LoadFont")
+	}
+
 	return renderer, nil
 }
