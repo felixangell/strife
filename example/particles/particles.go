@@ -1,14 +1,15 @@
 package main
 
 import (
-	"github.com/felixangell/strife"
 	"math/rand"
+
+	"github.com/felixangell/strife"
 )
 
 type Particle struct {
 	x, y   float64
 	dx, dy float64
-	colour int32
+	colour uint32
 	s      int
 }
 
@@ -46,7 +47,7 @@ func main() {
 			dx:     randFloat(-(speedCap), speedCap),
 			dy:     randFloat(-(speedCap), speedCap),
 			s:      size,
-			colour: int32(rand.Intn(0xffffff) / 0xff),
+			colour: uint32(rand.Intn(0xffffff) / 0xff),
 		}
 	}
 
