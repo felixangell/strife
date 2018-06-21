@@ -159,7 +159,7 @@ func (r *Renderer) renderRune(char rune) (*sdl.Texture, []int32) {
 	return texture, []int32{surface.W, surface.H}
 }
 
-func (r *Renderer) String(message string, x, y int) (int, int) {
+func (r *Renderer) Text(message string, x, y int) (int, int) {
 	if r.font == nil {
 		panic("Attempted to render '" + message + "' but no font is set!")
 	}
@@ -186,7 +186,7 @@ func (r *Renderer) String(message string, x, y int) (int, int) {
 	return int(width), int(height)
 }
 
-func (r *Renderer) UncachedString(message string, x, y int) (int, int) {
+func (r *Renderer) UncachedText(message string, x, y int) (int, int) {
 	if r.font == nil {
 		panic("Attempted to render '" + message + "' but no font is set!")
 	}
