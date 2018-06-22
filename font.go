@@ -34,6 +34,7 @@ func (g *glyphInfo) asKey() string {
 }
 
 func encode(col uint32, style fontStyle, val rune) glyphInfo {
+	println("encoded rune ", col, " . ", string(val))
 	return glyphInfo{
 		val: val, col: col, style: style,
 	}

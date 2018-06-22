@@ -89,17 +89,15 @@ func (r *Renderer) Display() {
 	r.Renderer.Present()
 }
 
-func (r *Renderer) SetColor(col *Color) {
-	r.color = col
+func (r *Renderer) SetColor(color *Color) {
+	r.color = color
+	r.SetDrawColor(color.R, color.G, color.B, color.A)
 }
 
 // Rect will draw a rectangle at the given x, y co-ordinates
 // of the specified size. It takes the mode to render the
 // rectangle as: fill or line.
 func (r *Renderer) Rect(x, y, w, h int, mode Style) {
-	color := r.color
-	r.SetDrawColor(color.R, color.G, color.B, color.A)
-
 	if mode == Line {
 		r.DrawRect(&sdl.Rect{int32(x), int32(y), int32(w), int32(h)})
 	} else {
@@ -124,16 +122,16 @@ func maxInt32(a, b int32) int32 {
 
 var allocs int
 
-func (r *Renderer) renderRune(char rune) (*sdl.Texture, []int32) {
+func (r *Renderer) renderRune(color *Color, char rune) (*sdl.Texture, []int32) {
 	message := string(char)
 
 	var surface *sdl.Surface
 	var err error
 
 	if r.Alias {
-		surface, err = r.font.RenderUTF8Blended(message, r.color.ToSDLColor())
+		surface, err = r.font.RenderUTF8Blended(message, color.ToSDLColor())
 	} else {
-		surface, err = r.font.RenderUTF8Solid(message, r.color.ToSDLColor())
+		surface, err = r.font.RenderUTF8Solid(message, color.ToSDLColor())
 	}
 
 	defer surface.Free()
@@ -172,7 +170,7 @@ func (r *Renderer) Text(message string, x, y int) (int, int) {
 
 		glyph, ok := r.font.hasGlyph(encoding)
 		if !ok {
-			texture, dim := r.renderRune(char)
+			texture, dim := r.renderRune(r.color, char)
 			glyph = r.font.cache(encoding, texture, dim)
 		}
 

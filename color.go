@@ -5,11 +5,11 @@ import (
 )
 
 var (
-	White *Color = RGB(255, 255, 255)
-	Red          = RGB(255, 0, 0)
-	Green        = RGB(0, 255, 0)
-	Blue         = RGB(0, 0, 255)
-	Black        = RGB(0, 0, 0)
+	White = RGB(255, 255, 255)
+	Red   = RGB(255, 0, 0)
+	Green = RGB(0, 255, 0)
+	Blue  = RGB(0, 0, 255)
+	Black = RGB(0, 0, 0)
 )
 
 type Color struct {
@@ -25,8 +25,10 @@ func (c Color) ToSDLColor() sdl.Color {
 }
 
 func (c Color) AsHex() uint32 {
-	result := uint32((c.R << 16) + (c.G << 8) + c.B)
-	return result
+	hex := uint32(c.R)
+	hex = (hex << 8) + uint32(c.G)
+	hex = (hex << 8) + uint32(c.B)
+	return hex
 }
 
 var colorCache = map[uint32]*Color{}
