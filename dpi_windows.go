@@ -16,9 +16,19 @@ func abort(funcname string, err error) {
 // to be enabled programmatically. Mac does not
 // however... but maybe in the future :(
 func EnableDPI() {
-	var mod = syscall.NewLazyDLL("Shcore.dll")
-	var proc = mod.NewProc("SetProcessDpiAwareness")
-	var PROCESS_PER_MONITOR_DPI_AWARE = 0x00000002
+	mod := syscall.NewLazyDLL("Shcore.dll")
+	if mod != nil {
+		log.Println("EnableDPI: Error loading DLL?")
+		return
+	}
+
+	proc := mod.NewProc("SetProcessDpiAwareness")
+	if err := proc.Find(); err != nil {
+		log.Println("EnableDPI: ", err)
+		return
+	}
+
+	PROCESS_PER_MONITOR_DPI_AWARE := 0x00000002
 
 	type HRESULT int32
 	const (
