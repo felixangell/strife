@@ -1,6 +1,7 @@
 package strife
 
 import (
+	"fmt"
 	"runtime"
 
 	"github.com/veandco/go-sdl2/sdl"
@@ -16,10 +17,13 @@ func defaultDpi() float32 {
 }
 
 // returns the dpi, and the default dpi
-func GetDisplayDPI(displayIndex int) (float32, float32) {
-	_, hdpi, _, err := sdl.GetDisplayDPI(displayIndex)
+func GetDisplayDPI(displayIndex int) (dpi float32, def float32) {
+	ddpi, hdpi, vdpi, err := sdl.GetDisplayDPI(displayIndex)
 	if err != nil {
+		panic(err)
 		return 0, defaultDpi()
 	}
+
+	fmt.Println("dpi stuff", ddpi, hdpi, vdpi)
 	return hdpi, defaultDpi()
 }

@@ -36,6 +36,8 @@ type RenderConfig struct {
 // with all pretty settings turned off.
 // vertical synchronisation is enabled.
 func GoGoStrifeFast() *RenderConfig {
+	sdl.Init(sdl.INIT_VIDEO)
+
 	return &RenderConfig{
 		Alias:        false,
 		Accelerated:  true,
@@ -46,6 +48,7 @@ func GoGoStrifeFast() *RenderConfig {
 // DefaultConfig with all of the rendering options
 // enabled.
 func DefaultConfig() *RenderConfig {
+	sdl.Init(sdl.INIT_VIDEO)
 	return &RenderConfig{
 		Alias:        true,
 		Accelerated:  true,

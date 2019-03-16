@@ -150,6 +150,10 @@ func (w *RenderWindow) SetResizable(resizable bool) {
 	w.flags |= sdl.WINDOW_RESIZABLE
 }
 
+func (w *RenderWindow) AllowHighDPI() {
+	w.flags |= sdl.WINDOW_ALLOW_HIGHDPI
+}
+
 func (w *RenderWindow) Create() error {
 	windowHandle, err := sdl.CreateWindow("", sdl.WINDOWPOS_CENTERED, sdl.WINDOWPOS_CENTERED, int32(w.w), int32(w.h), w.flags)
 	if err != nil {
@@ -184,8 +188,6 @@ func SetupRenderWindow(w, h int, config *RenderConfig) *RenderWindow {
 
 	a, b := GetDisplayDPI(0)
 	log.Println("dpi, default_dpi = ", a, b)
-
-	sdl.Init(sdl.INIT_VIDEO)
 
 	window := &RenderWindow{
 		config: config,
