@@ -16,14 +16,13 @@ func defaultDpi() float32 {
 	return 72.0 // hm!?
 }
 
-// returns the dpi, and the default dpi
+// GetDisplayDPI returns the dpi and default dpi of the
+// given display
 func GetDisplayDPI(displayIndex int) (dpi float32, def float32) {
 	ddpi, hdpi, vdpi, err := sdl.GetDisplayDPI(displayIndex)
 	if err != nil {
-		panic(err)
 		return 0, defaultDpi()
 	}
-
-	fmt.Println("dpi stuff", ddpi, hdpi, vdpi)
+	fmt.Println("GetDisplayDPI", ddpi, hdpi, vdpi)
 	return hdpi, defaultDpi()
 }

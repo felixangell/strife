@@ -10,12 +10,15 @@ import (
 	"github.com/veandco/go-sdl2/sdl"
 )
 
-// The style to render
+// Style to render
 // primitive shapes (Rectangles, Circles, etc).
 // Fill meaning fill the shape with colour, and
 // Line meaning to draw the outline of the shape.
 type Style uint
 
+// Types of render styles, Line for stroke
+// e.g. outline of a shape, vs fill which will
+// fill a rectangle.
 const (
 	Line Style = iota
 	Fill
@@ -32,7 +35,7 @@ type RenderConfig struct {
 	VerticalSync bool
 }
 
-// FastConfig is the default configuration
+// GoGoStrifeFast is the default configuration
 // with all pretty settings turned off.
 // vertical synchronisation is enabled.
 func GoGoStrifeFast() *RenderConfig {
@@ -56,6 +59,9 @@ func DefaultConfig() *RenderConfig {
 	}
 }
 
+// An instance of the renderer, contains the
+// renderers current configuration, as well
+// as the colour state and font state.
 type Renderer struct {
 	RenderConfig
 	*sdl.Renderer
@@ -88,10 +94,12 @@ func (r *Renderer) GetSize() (int, int) {
 	return int(w), int(h)
 }
 
+// Display the renderer to the window
 func (r *Renderer) Display() {
 	r.Renderer.Present()
 }
 
+// SetColor sets the current colour state
 func (r *Renderer) SetColor(color *Color) {
 	r.color = color
 	r.SetDrawColor(color.R, color.G, color.B, color.A)
@@ -108,10 +116,12 @@ func (r *Renderer) Rect(x, y, w, h int, mode Style) {
 	}
 }
 
+// GetFont returns the current font that was last set
 func (r *Renderer) GetFont() *Font {
 	return r.font
 }
 
+// SetFont will set the font state
 func (r *Renderer) SetFont(font *Font) {
 	r.font = font
 }
@@ -160,6 +170,9 @@ func (r *Renderer) renderRune(color *Color, char rune) (*sdl.Texture, []int32) {
 	return texture, []int32{surface.W, surface.H}
 }
 
+// Text renders the given text to the given x, y coordinates.
+// Note that the text is cached, i.e. each glyph rendered will be cached
+// and re-used. UncachedText is the alternative, though it's slower.
 func (r *Renderer) Text(message string, x, y int) (int, int) {
 	if r.font == nil {
 		panic("Attempted to render '" + message + "' but no font is set!")
@@ -187,6 +200,10 @@ func (r *Renderer) Text(message string, x, y int) (int, int) {
 	return int(width), int(height)
 }
 
+// UncachedText is the same as Text, it draws the given
+// string to the given x,y
+// note that it doesn't cache the glyphs, however, so
+// should not be used for lots of text rendering!
 func (r *Renderer) UncachedText(message string, x, y int) (int, int) {
 	if r.font == nil {
 		panic("Attempted to render '" + message + "' but no font is set!")

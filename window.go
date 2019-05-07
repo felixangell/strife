@@ -18,6 +18,9 @@ func init() {
 	runtime.LockOSThread()
 }
 
+// RenderWindow is a window context
+// with a rendererer. It contains the handlers
+// for events, as well as the render configuration options.
 type RenderWindow struct {
 	*sdl.Window
 	config         *RenderConfig
@@ -28,19 +31,23 @@ type RenderWindow struct {
 	flags          uint32
 }
 
+// SetIconImage will set the window icon from the given Image
 func (w *RenderWindow) SetIconImage(img *Image) {
 	w.SetIcon(img.Surface)
 }
 
+// CloseRequested will return if the window has
+// had a CloseRequest even triggered.
 func (w *RenderWindow) CloseRequested() bool {
 	return w.closeRequested
 }
 
+// HandleEvents will set the event handler predicate.
 func (w *RenderWindow) HandleEvents(handler func(StrifeEvent)) {
 	w.handler = handler
 }
 
-// CloseRequested will poll for any events. All events
+// PollEvents will poll for any events. All events
 // are unhandled, _except_ for the Quit Event, which will
 // destroy the render context, render window, and cause
 // this function to return true.
@@ -135,29 +142,37 @@ func (w *RenderWindow) PollEvents() {
 	}
 }
 
+// GetRenderContext returns the render context
 func (w *RenderWindow) GetRenderContext() *Renderer {
 	return w.renderContext
 }
 
-// TODO make this private
+// Close will close the render window
+// and destroy the context.
 func (w *RenderWindow) Close() {
 	w.closeRequested = true
 	w.renderContext.Destroy()
 	w.Destroy()
 }
 
+// SetResizable will add the resizable flag, must be called
+// before Create()
 func (w *RenderWindow) SetResizable(resizable bool) {
 	w.flags |= sdl.WINDOW_RESIZABLE
 }
 
+// AllowHighDPI will allow a high DPI, must be called
+// before Create()
 func (w *RenderWindow) AllowHighDPI() {
 	w.flags |= sdl.WINDOW_ALLOW_HIGHDPI
 }
 
+// Create window take all of the settings and create
+// a window with a rendering context
 func (w *RenderWindow) Create() error {
 	windowHandle, err := sdl.CreateWindow("", sdl.WINDOWPOS_CENTERED, sdl.WINDOWPOS_CENTERED, int32(w.w), int32(w.h), w.flags)
 	if err != nil {
-		return fmt.Errorf("Failed to create window\n")
+		return fmt.Errorf("Failed to create window")
 	}
 	w.Window = windowHandle
 
@@ -171,12 +186,13 @@ func (w *RenderWindow) Create() error {
 	return nil
 }
 
+// GetSize will return the window width and height
 func (w *RenderWindow) GetSize() (int, int) {
 	ww, hh := w.Window.GetSize()
 	return int(ww), int(hh)
 }
 
-// CreateRenderWindow will create a render window of the given
+// SetupRenderWindow will create a render window of the given
 // width and height, with the specified configuration. You can
 // specify a default configuration with `strife.DefaultConfig()`.
 // Note that this will spawn the window at the centre of the main

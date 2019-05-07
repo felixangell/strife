@@ -6,7 +6,7 @@ import (
 	"github.com/felixangell/strife"
 )
 
-type Particle struct {
+type particle struct {
 	x, y   float64
 	dx, dy float64
 	colour uint32
@@ -41,7 +41,7 @@ func main() {
 	particles := [numParticles]*Particle{}
 	for i := 0; i < numParticles; i++ {
 		size := rand.Intn(32) + 8
-		particles[i] = &Particle{
+		particles[i] = &particle{
 			x:      randFloat(0, float64(w-size)),
 			y:      randFloat(0, float64(h-size)),
 			dx:     randFloat(-(speedCap), speedCap),

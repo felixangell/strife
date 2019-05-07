@@ -4,7 +4,9 @@ import (
 	"github.com/veandco/go-sdl2/sdl"
 )
 
+// A mapping of _all_ the SDL keys.
 const (
+	// mapping to sdl.K_UNKNOWN
 	UNKNOWN = sdl.K_UNKNOWN // "" (no name, empty string)
 
 	KEY_RETURN     = sdl.K_RETURN     // "Return" (the Enter key (main keyboard))

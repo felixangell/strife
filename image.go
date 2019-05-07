@@ -2,10 +2,12 @@ package strife
 
 import (
 	"fmt"
-	"github.com/veandco/go-sdl2/sdl"
+
 	img "github.com/veandco/go-sdl2/img"
+	"github.com/veandco/go-sdl2/sdl"
 )
 
+// Image wraps a SDL texture _and_ SDL surface
 type Image struct {
 	*sdl.Texture
 	*sdl.Surface
@@ -39,10 +41,13 @@ func LoadImage(path string) (*Image, error) {
 	return image, nil
 }
 
+// GetSurface returns a pointer to the SDL_Surface object
 func (i *Image) GetSurface() *sdl.Surface {
 	return i.Surface
 }
 
+// Destroy must be invoked when finished with the
+// resource.
 func (i *Image) Destroy() {
 	i.Texture.Destroy()
 	i.Surface.Free()

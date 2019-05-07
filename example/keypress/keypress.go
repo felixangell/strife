@@ -4,12 +4,12 @@ import (
 	"github.com/felixangell/strife"
 )
 
-type Player struct {
+type player struct {
 	x, y int
 	size int
 }
 
-func (p *Player) tickAndRender(ctx *strife.Renderer) {
+func (p *player) tickAndRender(ctx *strife.Renderer) {
 	if strife.KeyPressed(strife.KEY_W) {
 		p.y -= 1
 	}
@@ -27,11 +27,11 @@ func (p *Player) tickAndRender(ctx *strife.Renderer) {
 	ctx.Rect(p.x, p.y, p.size, p.size, strife.Fill)
 }
 
-type MyGame struct {
-	p *Player
+type game struct {
+	p *player
 }
 
-func (g *MyGame) tickAndRender(ctx *strife.Renderer) {
+func (g *game) tickAndRender(ctx *strife.Renderer) {
 	g.p.tickAndRender(ctx)
 }
 
@@ -54,8 +54,8 @@ func main() {
 	winWidth, winHeight := window.GetSize()
 	playerSize := 64
 
-	game := &MyGame{}
-	game.p = &Player{
+	game := &game{}
+	game.p = &player{
 		size: playerSize,
 		x:    (winWidth / 2) - (playerSize / 2),
 		y:    (winHeight / 2) - (playerSize / 2),
