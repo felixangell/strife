@@ -91,7 +91,7 @@ const (
 	Exposed
 )
 
-// WindowVisibilityEvent
+// WindowVisibilityEvent ...
 type WindowVisibilityEvent struct {
 	BaseEvent
 	Visibility
@@ -127,7 +127,7 @@ const (
 	FocusLost
 )
 
-// WindowFocusEvent
+// WindowFocusEvent ...
 type WindowFocusEvent struct {
 	BaseEvent
 	Focus

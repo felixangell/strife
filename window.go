@@ -8,7 +8,7 @@ import (
 	"github.com/veandco/go-sdl2/sdl"
 )
 
-// The current render instance, in an ideal
+// RenderInstance is the current render instance, in an ideal
 // world this will only be set once. This is exists
 // because SDL wants to have the render instance for
 // loading images, fonts, etc.
@@ -47,98 +47,111 @@ func (w *RenderWindow) HandleEvents(handler func(StrifeEvent)) {
 	w.handler = handler
 }
 
+func (w *RenderWindow) handleKeyboardEvent(evt *sdl.KeyboardEvent) {
+	keyCode := int(evt.Keysym.Sym)
+	if evt.Type == sdl.KEYUP {
+		w.handler(&KeyUpEvent{BaseEvent{}, keyCode})
+		keyboardInstance.keys[keyCode] = false
+	} else if evt.Type == sdl.KEYDOWN {
+		w.handler(&KeyDownEvent{BaseEvent{}, keyCode})
+		keyboardInstance.keys[keyCode] = true
+
+		// append the key press into a key
+		// buffer which can be processed.
+		keyboardInstance.buff = append(keyboardInstance.buff, keyCode)
+	}
+}
+
+func (w *RenderWindow) handleMouseButtonEvent(evt *sdl.MouseButtonEvent) {
+	if evt.Type == sdl.MOUSEBUTTONUP {
+		mouseInstance.ButtonState = NoMouseButtonsDown
+		return
+	}
+
+	switch evt.Button {
+	case sdl.BUTTON_LEFT:
+		mouseInstance.ButtonState = LeftMouseButton
+	case sdl.BUTTON_MIDDLE:
+		mouseInstance.ButtonState = ScrollWheel
+	case sdl.BUTTON_RIGHT:
+		mouseInstance.ButtonState = RightMouseButton
+	}
+}
+
+func (w *RenderWindow) handleMouseMotionEvent(evt *sdl.MouseMotionEvent) {
+	w.handler(&MouseMoveEvent{BaseEvent{}, int(evt.X), int(evt.Y)})
+	mouseInstance.X = int(evt.X)
+	mouseInstance.Y = int(evt.Y)
+
+	switch evt.State {
+	case sdl.BUTTON_LEFT:
+		mouseInstance.ButtonState = LeftMouseButton
+	case sdl.BUTTON_MIDDLE:
+		mouseInstance.ButtonState = ScrollWheel
+	case sdl.BUTTON_RIGHT:
+		mouseInstance.ButtonState = RightMouseButton
+	default:
+		mouseInstance.ButtonState = NoMouseButtonsDown
+	}
+}
+
+func (w *RenderWindow) handleWindowEvent(event *sdl.WindowEvent) {
+	switch evt.Event {
+
+	// events that affect visibility
+	case sdl.WINDOWEVENT_HIDDEN:
+		w.handler(&WindowVisibilityEvent{BaseEvent{}, Hidden})
+	case sdl.WINDOWEVENT_SHOWN:
+		w.handler(&WindowVisibilityEvent{BaseEvent{}, Shown})
+	case sdl.WINDOWEVENT_EXPOSED:
+		w.handler(&WindowVisibilityEvent{BaseEvent{}, Exposed})
+
+	// size/position stuff
+	case sdl.WINDOWEVENT_SIZE_CHANGED:
+		// should this be handled as its own event
+		// or as a resized event?
+		fallthrough
+	case sdl.WINDOWEVENT_RESIZED:
+		w.handler(&WindowResizeEvent{BaseEvent{}, int(evt.Data1), int(evt.Data2)})
+	case sdl.WINDOWEVENT_MOVED:
+		w.handler(&WindowMoveEvent{BaseEvent{}, int(evt.Data1), int(evt.Data2)})
+
+	// TODO: ENTER/LEAVE ... CLOSE?
+
+	// events that are to do with focus!
+	case sdl.WINDOWEVENT_FOCUS_GAINED:
+		w.handler(&WindowFocusEvent{BaseEvent{}, FocusLost})
+	case sdl.WINDOWEVENT_FOCUS_LOST:
+		w.handler(&WindowFocusEvent{BaseEvent{}, FocusGained})
+	}
+}
+
+func (w *RenderWindow) processEvent(event sdl.Event) {
+	switch evt := event.(type) {
+	case *sdl.QuitEvent:
+		w.handler(&CloseEvent{BaseEvent{}})
+	case *sdl.KeyboardEvent:
+		w.handleKeyboardEvent(evt)
+	case *sdl.MouseButtonEvent:
+		w.handleMouseButtonEvent(evt)
+	case *sdl.MouseMotionEvent:
+		w.handleMouseMotionEvent(evt)
+	case *sdl.MouseWheelEvent:
+		w.handler(&MouseWheelEvent{BaseEvent{}, int(evt.X), int(evt.Y)})
+	case *sdl.WindowEvent:
+		w.handleWindowEvent(evt)
+	default:
+		// log.Println("unhandled event!", reflect.TypeOf(evt), evt, " ... please file an issue on GitHub!")
+	}
+}
+
 // PollEvents will poll for any events. All events
 // are unhandled, _except_ for the Quit Event, which will
 // destroy the render context, render window, and cause
 // this function to return true.
 func (w *RenderWindow) PollEvents() {
 	for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
-		switch evt := event.(type) {
-		case *sdl.QuitEvent:
-			w.handler(&CloseEvent{BaseEvent{}})
-
-		case *sdl.KeyboardEvent:
-			keyCode := int(evt.Keysym.Sym)
-			if evt.Type == sdl.KEYUP {
-				w.handler(&KeyUpEvent{BaseEvent{}, keyCode})
-				keyboardInstance.keys[keyCode] = false
-			} else if evt.Type == sdl.KEYDOWN {
-				w.handler(&KeyDownEvent{BaseEvent{}, keyCode})
-				keyboardInstance.keys[keyCode] = true
-
-				// append the key press into a key
-				// buffer which can be processed.
-				keyboardInstance.buff = append(keyboardInstance.buff, keyCode)
-			}
-
-		case *sdl.MouseButtonEvent:
-			if evt.Type == sdl.MOUSEBUTTONUP {
-				mouseInstance.ButtonState = NoMouseButtonsDown
-				return
-			}
-
-			switch evt.Button {
-			case sdl.BUTTON_LEFT:
-				mouseInstance.ButtonState = LeftMouseButton
-			case sdl.BUTTON_MIDDLE:
-				mouseInstance.ButtonState = ScrollWheel
-			case sdl.BUTTON_RIGHT:
-				mouseInstance.ButtonState = RightMouseButton
-			}
-
-		case *sdl.MouseMotionEvent:
-			w.handler(&MouseMoveEvent{BaseEvent{}, int(evt.X), int(evt.Y)})
-			mouseInstance.X = int(evt.X)
-			mouseInstance.Y = int(evt.Y)
-
-			switch evt.State {
-			case sdl.BUTTON_LEFT:
-				mouseInstance.ButtonState = LeftMouseButton
-			case sdl.BUTTON_MIDDLE:
-				mouseInstance.ButtonState = ScrollWheel
-			case sdl.BUTTON_RIGHT:
-				mouseInstance.ButtonState = RightMouseButton
-			default:
-				mouseInstance.ButtonState = NoMouseButtonsDown
-			}
-
-		case *sdl.MouseWheelEvent:
-			w.handler(&MouseWheelEvent{BaseEvent{}, int(evt.X), int(evt.Y)})
-
-		case *sdl.WindowEvent:
-			switch evt.Event {
-
-			// events that affect visibility
-			case sdl.WINDOWEVENT_HIDDEN:
-				w.handler(&WindowVisibilityEvent{BaseEvent{}, Hidden})
-			case sdl.WINDOWEVENT_SHOWN:
-				w.handler(&WindowVisibilityEvent{BaseEvent{}, Shown})
-			case sdl.WINDOWEVENT_EXPOSED:
-				w.handler(&WindowVisibilityEvent{BaseEvent{}, Exposed})
-
-			// size/position stuff
-			case sdl.WINDOWEVENT_SIZE_CHANGED:
-				// should this be handled as its own event
-				// or as a resized event?
-				fallthrough
-			case sdl.WINDOWEVENT_RESIZED:
-				w.handler(&WindowResizeEvent{BaseEvent{}, int(evt.Data1), int(evt.Data2)})
-			case sdl.WINDOWEVENT_MOVED:
-				w.handler(&WindowMoveEvent{BaseEvent{}, int(evt.Data1), int(evt.Data2)})
-
-			// TODO: ENTER/LEAVE ... CLOSE?
-
-			// events that are to do with focus!
-			case sdl.WINDOWEVENT_FOCUS_GAINED:
-				w.handler(&WindowFocusEvent{BaseEvent{}, FocusLost})
-			case sdl.WINDOWEVENT_FOCUS_LOST:
-				w.handler(&WindowFocusEvent{BaseEvent{}, FocusGained})
-			}
-
-		default:
-			// log.Println("unhandled event!", reflect.TypeOf(evt), evt)
-		}
-
+		w.processEvent(event)
 	}
 }
 

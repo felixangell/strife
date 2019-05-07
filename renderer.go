@@ -59,9 +59,10 @@ func DefaultConfig() *RenderConfig {
 	}
 }
 
-// An instance of the renderer, contains the
+// Renderer contains the
 // renderers current configuration, as well
-// as the colour state and font state.
+// as the colour state and font state and a wrapper over
+// the SDL renderer.
 type Renderer struct {
 	RenderConfig
 	*sdl.Renderer
