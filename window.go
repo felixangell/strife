@@ -96,7 +96,7 @@ func (w *RenderWindow) handleMouseMotionEvent(evt *sdl.MouseMotionEvent) {
 }
 
 func (w *RenderWindow) handleWindowEvent(event *sdl.WindowEvent) {
-	switch evt.Event {
+	switch event.Event {
 
 	// events that affect visibility
 	case sdl.WINDOWEVENT_HIDDEN:
@@ -112,9 +112,9 @@ func (w *RenderWindow) handleWindowEvent(event *sdl.WindowEvent) {
 		// or as a resized event?
 		fallthrough
 	case sdl.WINDOWEVENT_RESIZED:
-		w.handler(&WindowResizeEvent{BaseEvent{}, int(evt.Data1), int(evt.Data2)})
+		w.handler(&WindowResizeEvent{BaseEvent{}, int(event.Data1), int(event.Data2)})
 	case sdl.WINDOWEVENT_MOVED:
-		w.handler(&WindowMoveEvent{BaseEvent{}, int(evt.Data1), int(evt.Data2)})
+		w.handler(&WindowMoveEvent{BaseEvent{}, int(event.Data1), int(event.Data2)})
 
 	// TODO: ENTER/LEAVE ... CLOSE?
 
