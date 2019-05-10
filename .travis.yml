@@ -1,5 +1,11 @@
 language: go
 
+env:
+  - GO111MODULE=on
+
+notifications:
+  email: false
+
 addons:
   apt:
     packages:

@@ -38,7 +38,7 @@ func main() {
 
 	w, h := window.GetSize()
 
-	particles := [numParticles]*Particle{}
+	particles := [numParticles]*particle{}
 	for i := 0; i < numParticles; i++ {
 		size := rand.Intn(32) + 8
 		particles[i] = &particle{
