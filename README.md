@@ -1,4 +1,4 @@
-# [strife](https://strife.felixangell.com)
+# [strife](https://strife.felixangell.com) [![Build Status](https://travis-ci.org/felixangell/strife.svg?branch=master)](https://travis-ci.org/felixangell/strife)
 A simple game framework that wraps around SDL2.
 
 ## example
