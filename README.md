@@ -4,7 +4,7 @@ A simple game framework that wraps around SDL2.
 ## example
 The largest example use of the Strife framework is the [Phi text editor](//phi.felixangell.com), a text editor written entirely from scratch with syntax highlighting, a command palette, multiple buffer support, etc.
 
-<p align="center"><img src="https://raw.githubusercontent.com/felixangell/phi/master/screenshot.png"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/felixangell/phi/gh-pages/images/screenshot.png"></p>
 
 Though there are some smaller examples demonstrating components of the Strife API in the `examples/` folder.
 
