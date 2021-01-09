@@ -326,10 +326,6 @@ func CreateRenderer(parent *RenderWindow, config *RenderConfig) (*Renderer, erro
 		return ""
 	}()
 
-	if chosenFont == "" {
-		panic(err.Error())
-	}
-
 	fontPath := filepath.Join(fontFolder, chosenFont)
 	log.Println("Loading font ", fontPath)
 
