@@ -2,12 +2,11 @@ package strife
 
 import (
 	"fmt"
+	"github.com/veandco/go-sdl2/sdl"
 	"log"
 	"os"
 	"path/filepath"
 	"runtime"
-
-	"github.com/veandco/go-sdl2/sdl"
 )
 
 // Style to render
@@ -169,6 +168,11 @@ func (r *Renderer) renderRune(color *Color, char rune) (*sdl.Texture, []int32) {
 	// log.Println("allocs ", allocs)
 
 	return texture, []int32{surface.W, surface.H}
+}
+
+func (r *Renderer) GetStringDimension(message string) (int, int) {
+	w, h := r.GetSize()
+	return r.Text(message, -w*2, -h*2)
 }
 
 // Text renders the given text to the given x, y coordinates.
