@@ -23,7 +23,7 @@ Simple as
 
 Make sure you have SDL2 installed as well as the ttf and img addons:
 
-	$ brew install SDL2 SDL2_ttf SDL2_img
+	$ brew install SDL2 SDL2_ttf SDL2_image
 
 ## getting started
 This is a commented code snippet to help you get started:
